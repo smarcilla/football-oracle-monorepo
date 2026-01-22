@@ -65,6 +65,7 @@ Referencia rapida a TODOs del ARCHITECTURE.md:
 - [ ] Robustez y fallos (4 TODOs)
 - [ ] Seguridad (4 TODOs)
 - [ ] Observabilidad (3 TODOs)
+- [ ] Gestion de BD (2 TODOs) - Ver ADR-0006
 
 ## Como Ejecutar
 
