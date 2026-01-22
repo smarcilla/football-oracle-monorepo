@@ -15,11 +15,11 @@
 |------|-------------|--------|
 | 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales | En progreso |
 | 2. Walking Skeleton | Infraestructura + servicios mock (ADR-0002) | Pendiente |
-| 3. Scraper real | Integracion con Sofascore/ScraperFC | Pendiente |
-| 4. Simulation Engine | Algoritmo Monte Carlo | Pendiente |
-| 5. Journalist Agent | Integracion Genkit + LLM | Pendiente |
-| 6. Frontend completo | UI con visualizaciones | Pendiente |
-| 7. CI/CD | Husky + GitHub Actions (ADR-0005) | Pendiente |
+| 3. CI/CD y calidad | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | Pendiente |
+| 4. Scraper real | Integracion con Sofascore/ScraperFC | Pendiente |
+| 5. Simulation Engine | Algoritmo Monte Carlo | Pendiente |
+| 6. Journalist Agent | Integracion Genkit + LLM | Pendiente |
+| 7. Frontend completo | UI con visualizaciones | Pendiente |
 
 ## Trabajo en Progreso
 
