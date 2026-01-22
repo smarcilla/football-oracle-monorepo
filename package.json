@@ -1,0 +1,13 @@
+{
+  "name": "football-oracle",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "docker-compose up",
+    "dev:build": "docker-compose up --build",
+    "down": "docker-compose down"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
