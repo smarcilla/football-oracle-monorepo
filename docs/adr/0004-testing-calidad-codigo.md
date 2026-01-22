@@ -99,11 +99,76 @@ service/
 
 ### Python (Scraper)
 
-| Herramienta | Proposito |
-|-------------|-----------|
-| pytest | Testing |
-| ruff | Linting (rapido, reemplaza flake8 + isort) |
-| black | Formatting |
+El servicio de scraping es pequeno y autocontenido. Se aplica una estrategia de calidad equivalente a TypeScript pero adaptada al ecosistema Python.
+
+| Herramienta | Proposito | Equivalente TS |
+|-------------|-----------|----------------|
+| pytest | Testing | Vitest |
+| ruff | Linting + formatting | ESLint + Prettier |
+| mypy | Type checking (opcional) | tsc |
+| pre-commit | Git hooks | Husky |
+
+**Configuracion Ruff** (`services/scraper/pyproject.toml`):
+
+```toml
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "F",   # pyflakes
+  "I",   # isort
+  "UP",  # pyupgrade
+]
+
+[tool.ruff.format]
+quote-style = "double"
+```
+
+**Configuracion pytest** (`services/scraper/pyproject.toml`):
+
+```toml
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+```
+
+**Type hints:** Uso relajado. Se recomienda añadir type hints para documentacion pero no se valida con mypy en CI. El scraper es pequeno y no justifica la ceremonia adicional.
+
+**Estructura del servicio:**
+
+```
+services/scraper/
+├── src/
+│   ├── __main__.py
+│   ├── config.py
+│   ├── handlers/
+│   ├── services/
+│   └── clients/
+├── tests/
+│   ├── unit/
+│   └── integration/
+├── pyproject.toml       # Config unificada (ruff, pytest, dependencias)
+├── requirements.txt     # Lock de dependencias para Docker
+└── Dockerfile
+```
+
+**pre-commit config** (`services/scraper/.pre-commit-config.yaml`):
+
+```yaml
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+```
+
+> **Nota:** El scraper usa `pre-commit` (framework Python) en lugar de Husky. Ambos coexisten en el monorepo sin conflicto.
 
 ### Scripts del monorepo
 
