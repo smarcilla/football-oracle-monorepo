@@ -11,6 +11,7 @@ Este directorio contiene los ADRs (Architecture Decision Records) del proyecto F
 | [0002](0002-walking-skeleton.md) | Walking Skeleton como primera iteracion | Aceptado | 2026-01-22 |
 | [0003](0003-arquitectura-interna-capas.md) | Arquitectura interna simple por capas | Aceptado | 2026-01-22 |
 | [0004](0004-testing-calidad-codigo.md) | Estrategia de testing y calidad de codigo | Aceptado | 2026-01-22 |
+| [0005](0005-ci-cd-git-hooks.md) | CI/CD y validacion local con Git Hooks | Aceptado | 2026-01-22 |
 
 ## Como crear un nuevo ADR
 
