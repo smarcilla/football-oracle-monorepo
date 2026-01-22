@@ -85,24 +85,6 @@ curl -X POST http://localhost:3001/analyze \
 pnpm run down
 ```
 
-## Como Ejecutar
-
-```bash
-# Levantar infraestructura + servicios
-pnpm run dev:build
-
-# Ver logs en tiempo real
-docker compose logs -f
-
-# Probar flujo completo
-curl -X POST http://localhost:3001/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"matchId": "test-123", "homeTeam": "Real Madrid", "awayTeam": "Barcelona"}'
-
-# Parar todo
-pnpm run down
-```
-
 ## Notas para Proxima Sesion
 
 ```
