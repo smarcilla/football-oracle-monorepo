@@ -1,0 +1,112 @@
+services:
+  # Infrastructure
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: football
+      POSTGRES_PASSWORD: football
+      POSTGRES_DB: football_oracle
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U football"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: football
+      RABBITMQ_DEFAULT_PASS: football
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Applications
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
+    depends_on:
+      api:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - RABBITMQ_URL=amqp://football:football@rabbitmq:5672
+      - DATABASE_URL=postgresql://football:football@postgres:5432/football_oracle
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Workers
+  scraper:
+    build:
+      context: ./services/scraper
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://football:football@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  engine:
+    build:
+      context: ./services/engine
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://football:football@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  journalist:
+    build:
+      context: ./services/journalist
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://football:football@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

@@ -13,7 +13,8 @@
 | 8. Robustez y Tolerancia a Fallos | 4 | Pendiente |
 | 9. Seguridad | 4 | Pendiente |
 | 10. Observabilidad | 3 | Pendiente |
-| **Total** | **14** | - |
+| 11. Gestión de Base de Datos | 2 | Pendiente |
+| **Total** | **16** | - |
 
 ---
 
@@ -283,7 +284,24 @@ Estructura de carpetas optimizada para VS Code Workspaces:
 
 ---
 
-## 11. Notas de Implementacion para IA (Genkit)
+## 11. Gestión de Base de Datos
+
+<!-- TODO_COUNT: 2 -->
+
+> **TODO:** Definir estrategia de inicialización de BD.
+> - Actualmente `POSTGRES_DB=football` en docker-compose solo crea la BD en el contenedor
+> - Los servicios fallan si la BD no existe o el schema no está creado
+> - ¿Script de inicialización? ¿Init container? ¿Healthcheck con retry?
+> - Ver ADR-0006 para decisión sobre herramientas
+
+> **TODO:** Definir estrategia de migraciones.
+> - ¿Prisma Migrate? ¿Drizzle Kit? ¿SQL puro con herramienta tipo golang-migrate?
+> - ¿Migraciones automáticas en startup vs CI/CD controlado?
+> - ¿Rollback strategy?
+
+---
+
+## 12. Notas de Implementacion para IA (Genkit)
 
 - **Modelo:** Usar modelos eficientes en costes (`gemini-1.5-flash` o `gpt-4o-mini`).
 - **Prompting:** Usar tecnica Chain-of-Thought en el prompt: "Analiza primero los datos de xG, luego compara con el resultado real, y finalmente escribe la crónica".
