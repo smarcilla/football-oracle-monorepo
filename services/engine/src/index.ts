@@ -1,14 +1,14 @@
-import { connectRabbitMQ, subscribe } from './clients/rabbitmq.js'
-import { handleDataExtracted } from './handlers/simulation.js'
+import { connectKafka, subscribe } from "./clients/kafka.js";
+import { handleDataExtracted } from "./handlers/simulation.js";
 
 async function start(): Promise<void> {
-  console.log('[Engine] Starting Simulation Engine...')
+  console.log("[Engine] Starting Simulation Engine...");
 
-  await connectRabbitMQ()
+  await connectKafka();
 
-  await subscribe('match.data_extracted', handleDataExtracted)
+  await subscribe("match.data_extracted", handleDataExtracted);
 
-  console.log('[Engine] Waiting for messages...')
+  console.log("[Engine] Waiting for messages...");
 }
 
-start().catch(console.error)
+start().catch(console.error);

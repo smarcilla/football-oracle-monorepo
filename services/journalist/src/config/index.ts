@@ -1,5 +1,7 @@
 export const config = {
-  rabbitmq: {
-    url: process.env.RABBITMQ_URL || 'amqp://localhost:5672',
+  kafka: {
+    brokers: (process.env.KAFKA_BROKERS || "localhost:9092").split(","),
+    clientId: "journalist-service",
+    groupId: "journalist-group",
   },
-}
+};
