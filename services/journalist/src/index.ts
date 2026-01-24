@@ -17,5 +17,4 @@ async function start(): Promise<void> {
   console.log("[Journalist] Service is up and waiting for events...");
 }
 
-
 start().catch(console.error);
