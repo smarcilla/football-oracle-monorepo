@@ -11,22 +11,22 @@ Validar la comunicacion entre todos los servicios antes de implementar logica de
 
 ## Componentes implementados
 
-| Componente | Implementacion | Estado |
-|------------|----------------|--------|
-| Frontend | Boton "Analyze Match" que llama a la API | OK |
-| API | Endpoint POST /analyze/:id que publica evento | OK |
-| Scraper | Consume evento, publica datos mock | OK |
-| Engine | Consume datos, ejecuta simulacion mock | OK |
-| Journalist | Consume simulacion, genera reporte mock | OK |
+| Componente | Implementacion                                | Estado |
+| ---------- | --------------------------------------------- | ------ |
+| Frontend   | Boton "Analyze Match" que llama a la API      | OK     |
+| API        | Endpoint POST /analyze/:id que publica evento | OK     |
+| Scraper    | Consume evento, publica datos mock            | OK     |
+| Engine     | Consume datos, ejecuta simulacion mock        | OK     |
+| Journalist | Consume simulacion, genera reporte mock       | OK     |
 
 ## Flujo de eventos
 
 ```
-Frontend (click) 
-    → POST /analyze/:id 
+Frontend (click)
+    → POST /analyze/:id
     → API publica "match.analysis_requested"
     → Scraper consume, publica "match.data_extracted"
-    → Engine consume, publica "match.simulation_completed"  
+    → Engine consume, publica "match.simulation_completed"
     → Journalist consume, publica "match.report_ready"
     → API consume y logea "FLOW COMPLETED"
 ```
@@ -64,8 +64,9 @@ curl -X POST http://localhost:4000/analyze/test-match-123
 ```
 
 Respuesta esperada:
+
 ```json
-{"status":"accepted","message":"Analysis started for match test-match-123"}
+{ "status": "accepted", "message": "Analysis started for match test-match-123" }
 ```
 
 ### 3. Verificar los logs
@@ -77,18 +78,21 @@ docker-compose logs --tail=100
 **Logs esperados (en orden):**
 
 1. **API** publica el evento:
+
 ```
 api-1 | [API] Received analyze request for match: test-match-123
-api-1 | [RabbitMQ] Published to match.analysis_requested
+api-1 | [Kafka] Published to match.analysis_requested
 ```
 
 2. **Scraper** procesa y publica datos mock:
+
 ```
 scraper-1 | [Scraper] Processing match: test-match-123
 scraper-1 | [Scraper] Extracted 4 shots
 ```
 
 3. **Engine** ejecuta simulacion mock:
+
 ```
 engine-1 | [Engine] Processing match: test-match-123
 engine-1 | [Engine] Running Monte Carlo simulation (mock)...
@@ -97,6 +101,7 @@ engine-1 | [Engine] Simulation complete: { homeWinProb: 0.45, ... }
 ```
 
 4. **Journalist** genera reporte mock:
+
 ```
 journalist-1 | [Journalist] Processing match: test-match-123
 journalist-1 | [Journalist] Generating match report (mock)...
@@ -104,29 +109,26 @@ journalist-1 | [Journalist] Report generated: Real Madrid vs Barcelona: Analysis
 ```
 
 5. **API** confirma flujo completado:
+
 ```
 api-1 | [API] ========================================
 api-1 | [API] FLOW COMPLETED! Report ready: { ... }
 api-1 | [API] ========================================
 ```
 
-### 4. Verificar RabbitMQ (opcional)
+### 4. Verificar Kafka (opcional)
 
-1. Abrir http://localhost:15672
-2. Login: `football` / `football`
-3. Ir a "Exchanges" → ver `football_oracle` (topic exchange)
-4. Ir a "Queues" → ver las colas temporales de cada servicio
+Al usar Kafka, puedes verificar que los mensajes están llegando a los tópicos usando comandos de Docker:
+
+```bash
+docker-compose exec kafka kafka-topics --bootstrap-server localhost:9092 --list
+```
 
 ## Troubleshooting
 
-### Los servicios no se conectan a RabbitMQ
+### Los servicios no se conectan a Kafka
 
-Los servicios tienen retry logic. Si RabbitMQ tarda en iniciar, veran logs como:
-```
-[RabbitMQ] Connection failed, retrying... (9 left)
-```
-
-Esperar a que se conecten (maximo ~20 segundos).
+Los servicios tienen retry logic. Si Kafka tarda en iniciar, verán logs de error de conexión en la consola. Esperar a que el healthcheck de Kafka pase (maximo ~30 segundos).
 
 ### El scraper no muestra logs
 

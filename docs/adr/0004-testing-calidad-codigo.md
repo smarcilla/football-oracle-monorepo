@@ -32,18 +32,18 @@ El proyecto es un monorepo con servicios Node.js/TypeScript y un servicio Python
        /  \      E2E (flujo completo: boton → reporte)
       /----\     Pocos, lentos, fragiles
      /      \
-    /--------\   Integracion (servicio + DB/RabbitMQ real)
+    /--------\   Integracion (servicio + DB/Kafka real)
    /          \  Moderados, validan contratos
-  /------------\ 
+  /------------\
  /              \ Unit (logica en services/)
 /________________\ Muchos, rapidos, sin I/O
 ```
 
-| Tipo | Scope | Herramientas | Cantidad |
-|------|-------|--------------|----------|
-| Unit | Funciones en `services/` | Vitest | Mayoría |
-| Integracion | Handler + cliente real | Vitest + Testcontainers | Moderada |
-| E2E | Flujo completo | Vitest + docker-compose | Pocos (happy path) |
+| Tipo        | Scope                    | Herramientas            | Cantidad           |
+| ----------- | ------------------------ | ----------------------- | ------------------ |
+| Unit        | Funciones en `services/` | Vitest                  | Mayoría            |
+| Integracion | Handler + cliente real   | Vitest + Testcontainers | Moderada           |
+| E2E         | Flujo completo           | Vitest + docker-compose | Pocos (happy path) |
 
 **Ubicacion de tests:**
 
@@ -101,12 +101,12 @@ service/
 
 El servicio de scraping es pequeno y autocontenido. Se aplica una estrategia de calidad equivalente a TypeScript pero adaptada al ecosistema Python.
 
-| Herramienta | Proposito | Equivalente TS |
-|-------------|-----------|----------------|
-| pytest | Testing | Vitest |
-| ruff | Linting + formatting | ESLint + Prettier |
-| mypy | Type checking (opcional) | tsc |
-| pre-commit | Git hooks | Husky |
+| Herramienta | Proposito                | Equivalente TS    |
+| ----------- | ------------------------ | ----------------- |
+| pytest      | Testing                  | Vitest            |
+| ruff        | Linting + formatting     | ESLint + Prettier |
+| mypy        | Type checking (opcional) | tsc               |
+| pre-commit  | Git hooks                | Husky             |
 
 **Configuracion Ruff** (`services/scraper/pyproject.toml`):
 
@@ -187,40 +187,46 @@ repos:
 ## Alternativas Consideradas
 
 ### Testing: Jest
+
 - **Pros:** Estandar de la industria, mucha documentacion
 - **Contras:** Mas lento, configuracion ESM compleja en monorepos
 
 ### Testing: Node test runner
+
 - **Pros:** Zero dependencies, nativo
 - **Contras:** Menos features, ecosistema inmaduro
 
 ### Linting: Biome
+
 - **Pros:** Muy rapido, todo en uno
 - **Contras:** Menos reglas que ESLint, ecosistema mas pequeno
 
 ## Consecuencias
 
 ### Positivas
+
 - Stack moderno y rapido
 - Buena experiencia de desarrollo
 - Configuracion compartida en monorepo
 
 ### Negativas
+
 - Vitest menos conocido que Jest (curva de aprendizaje minima)
 - ESLint 9 flat config es nuevo (menos ejemplos online)
 
 ### Riesgos
+
 - Vitest podria tener edge cases con algunas librerias
 - Mitigacion: Jest como fallback si hay problemas criticos
 
 ## Metricas de calidad objetivo
 
-| Metrica | Objetivo | Obligatorio |
-|---------|----------|-------------|
-| Coverage (unit) | > 70% | No (por ahora) |
-| Coverage (services/) | > 80% | Si |
-| Lint errors | 0 | Si (bloquea CI) |
-| Type errors | 0 | Si (bloquea CI) |
+| Metrica              | Objetivo | Obligatorio     |
+| -------------------- | -------- | --------------- |
+| Coverage (unit)      | > 70%    | No (por ahora)  |
+| Coverage (services/) | > 80%    | Si              |
+| Lint errors          | 0        | Si (bloquea CI) |
+| Type errors          | 0        | Si (bloquea CI) |
 
 ## Referencias
 
