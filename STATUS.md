@@ -1,38 +1,39 @@
 # Project Status
 
 > Este fichero mantiene el estado actual del proyecto para continuidad entre sesiones.  
-> **Ultima actualizacion:** 2026-01-22
+> **Ultima actualizacion:** 2026-01-23
 
 ## Estado Actual
 
-**Fase:** Walking Skeleton  
-**Branch activa:** `feat/walking-skeleton`  
-**Proximo paso:** Merge PR y comenzar CI/CD (Fase 3)
+**Fase:** Walking Skeleton (Kafka Refactor Completed)  
+**Branch activa:** `feat/migration-kafka`  
+**Proximo paso:** Resolver ADR-0006 y TODOs de Base de Datos (PostgreSQL)
 
 ## Roadmap
 
-| Fase | Descripcion | Estado |
-|------|-------------|--------|
-| 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales | Completado |
-| 2. Walking Skeleton | Infraestructura + servicios mock (ADR-0002) | En progreso (PR pendiente) |
-| 3. CI/CD y calidad | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | Pendiente |
-| 4. Scraper real | Integracion con Sofascore/ScraperFC | Pendiente |
-| 5. Simulation Engine | Algoritmo Monte Carlo | Pendiente |
-| 6. Journalist Agent | Integracion Genkit + LLM | Pendiente |
-| 7. Frontend completo | UI con visualizaciones | Pendiente |
+| Fase                  | Descripcion                                               | Estado                     |
+| --------------------- | --------------------------------------------------------- | -------------------------- |
+| 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales                          | Completado                 |
+| 2. Walking Skeleton   | Infraestructura + servicios mock (ADR-0002)               | En progreso (PR pendiente) |
+| 3. CI/CD y calidad    | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | Pendiente                  |
+| 4. Scraper real       | Integracion con Sofascore/ScraperFC                       | Pendiente                  |
+| 5. Simulation Engine  | Algoritmo Monte Carlo                                     | Pendiente                  |
+| 6. Journalist Agent   | Integracion Genkit + LLM                                  | Pendiente                  |
+| 7. Frontend completo  | UI con visualizaciones                                    | Pendiente                  |
 
 ## Trabajo en Progreso
 
-### Branch: `feat/walking-skeleton`
+### Branch: `feat/migration-kafka`
+
 - [x] Estructura monorepo con pnpm workspaces
-- [x] docker-compose.yml (PostgreSQL, RabbitMQ, Redis)
-- [x] apps/api - Express con RabbitMQ pub/sub
+- [x] docker-compose.yml (PostgreSQL, Kafka, Redis)
+- [x] apps/api - Express con Kafka (kafkajs)
 - [x] apps/web - Next.js frontend
-- [x] services/scraper - Python worker
-- [x] services/engine - Node simulation engine
-- [x] services/journalist - Node report generator
+- [x] services/scraper - Python worker (confluent-kafka)
+- [x] services/engine - Node simulation engine (kafkajs)
+- [x] services/journalist - Node report generator (kafkajs)
 - [x] packages/types - Tipos TypeScript compartidos
-- [x] Flujo completo probado end-to-end
+- [x] Flujo completo probado end-to-end con Kafka
 - [x] Documentacion en docs/phases/02-walking-skeleton.md
 - [ ] Crear PR
 - [ ] Merge a main
@@ -43,7 +44,7 @@
 User -> Web (Next.js) -> API (Express)
                             |
                             v
-                        RabbitMQ
+                          Kafka
                             |
         +-------------------+-------------------+
         |                   |                   |
@@ -52,6 +53,7 @@ User -> Web (Next.js) -> API (Express)
 ```
 
 **Flujo de eventos:**
+
 1. `match.analysis.requested` - API publica cuando usuario solicita analisis
 2. `match.data.scraped` - Scraper publica con datos del partido
 3. `simulation.completed` - Engine publica con resultados de simulacion

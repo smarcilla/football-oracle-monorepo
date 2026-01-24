@@ -1,4 +1,4 @@
-from src.clients.rabbitmq import publish
+from src.clients.kafka import publish
 
 
 def handle_analysis_requested(message: dict):

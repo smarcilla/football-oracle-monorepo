@@ -1,27 +1,29 @@
-import { publish } from '../clients/rabbitmq.js'
+import { publish } from "@football-oracle/kafka";
 
 interface SimulationData {
-  matchId: string
-  homeTeam: string
-  awayTeam: string
-  iterations: number
+  matchId: string;
+  homeTeam: string;
+  awayTeam: string;
+  iterations: number;
   results: {
-    homeWinProb: number
-    drawProb: number
-    awayWinProb: number
-    mostLikelyScore: string
+    homeWinProb: number;
+    drawProb: number;
+    awayWinProb: number;
+    mostLikelyScore: string;
     expectedGoals: {
-      home: number
-      away: number
-    }
-  }
+      home: number;
+      away: number;
+    };
+  };
 }
 
-export async function handleSimulationCompleted(message: object): Promise<void> {
-  const data = message as SimulationData
+export async function handleSimulationCompleted(
+  message: object,
+): Promise<void> {
+  const data = message as SimulationData;
 
-  console.log(`[Journalist] Processing match: ${data.matchId}`)
-  console.log(`[Journalist] Generating match report (mock)...`)
+  console.log(`[Journalist] Processing match: ${data.matchId}`);
+  console.log(`[Journalist] Generating match report (mock)...`);
 
   // Mock report - in real implementation this would call Genkit/LLM
   const mockReport = {
@@ -41,9 +43,9 @@ export async function handleSimulationCompleted(message: object): Promise<void> 
       Expected goals: ${data.homeTeam} ${data.results.expectedGoals.home.toFixed(1)} - ${data.results.expectedGoals.away.toFixed(1)} ${data.awayTeam}
     `.trim(),
     generatedAt: new Date().toISOString(),
-  }
+  };
 
-  console.log(`[Journalist] Report generated:`, mockReport.title)
+  console.log(`[Journalist] Report generated:`, mockReport.title);
 
-  await publish('match.report_ready', mockReport)
+  await publish("match.report_ready", mockReport);
 }

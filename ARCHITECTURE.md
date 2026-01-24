@@ -7,14 +7,14 @@
 
 ### Deuda Técnica (TODOs)
 
-| Sección | TODOs | Estado |
-|---------|-------|--------|
-| 7. Consistencia de Datos | 3 | Pendiente |
-| 8. Robustez y Tolerancia a Fallos | 4 | Pendiente |
-| 9. Seguridad | 4 | Pendiente |
-| 10. Observabilidad | 3 | Pendiente |
-| 11. Gestión de Base de Datos | 2 | Pendiente |
-| **Total** | **16** | - |
+| Sección                           | TODOs  | Estado    |
+| --------------------------------- | ------ | --------- |
+| 7. Consistencia de Datos          | 3      | Pendiente |
+| 8. Robustez y Tolerancia a Fallos | 4      | Pendiente |
+| 9. Seguridad                      | 4      | Pendiente |
+| 10. Observabilidad                | 3      | Pendiente |
+| 11. Gestión de Base de Datos      | 2      | Pendiente |
+| **Total**                         | **16** | -         |
 
 ---
 
@@ -37,7 +37,7 @@ El sistema sigue un patrón de **Microservicios Asíncronos** orquestados por ev
 | **Scraper Worker**    | Python                 | Extracción de datos (ScraperFC/Sofascore). Único componente en Python. |
 | **Simulation Engine** | Node.js (TS)           | Motor matemático. Ejecución de algoritmos Monte Carlo.                 |
 | **Journalist Agent**  | Node.js (TS) + Genkit  | Generación de narrativas (NLG) usando LLMs (Gemini/OpenAI).            |
-| **Message Broker**    | RabbitMQ               | Bus de eventos para comunicación asíncrona.                            |
+| **Message Broker**    | Apache Kafka (KRaft)   | Bus de eventos para comunicación asíncrona.                            |
 | **Persistencia**      | PostgreSQL             | Base de datos relacional principal.                                    |
 | **Caché/Estado**      | Redis                  | Caché de respuestas y estado de trabajos en tiempo real.               |
 
@@ -65,7 +65,7 @@ El sistema sigue un patrón de **Microservicios Asíncronos** orquestados por ev
 
 ### C. Scraper Worker (Python Service)
 
-- **Stack:** Python 3.10+, ScraperFC, Pika (RabbitMQ client).
+- **Stack:** Python 3.10+, ScraperFC, confluent-kafka.
 - **Modos de Operación:**
   1.  **Modo Calendario (Light):** Descarga lista de partidos (IDs, fechas, equipos) sin entrar al detalle.
   2.  **Modo Partido (Heavy):** Entra en un ID específico y extrae el _Shotmap_ (mapa de tiros) y xG.
@@ -90,7 +90,7 @@ El sistema sigue un patrón de **Microservicios Asíncronos** orquestados por ev
 
 ## 4. Flujo de Datos y Eventos (Event Choreography)
 
-El sistema se mueve mediante mensajes en RabbitMQ.
+El sistema se mueve mediante mensajes en Kafka.
 
 **1. Flujo de Ingesta de Calendario (Setup)**
 
@@ -158,6 +158,7 @@ erDiagram
 ```
 
 > **Notas del modelo:**
+>
 > - `MATCHES.id`: ID de Sofascore
 > - `MATCHES.status`: Valores posibles: `PENDING`, `FINISHED`, `ANALYZED`
 > - `MATCHES.real_score`: JSON con formato `{home: 2, away: 1}`
@@ -171,16 +172,16 @@ Se utiliza Docker Compose para orquestar la infraestructura completa. No se requ
 
 ### Estructura del docker-compose.yml
 
-| Servicio           | Puerto        | Descripcion                      |
-| :----------------- | :------------ | :------------------------------- |
-| `postgres`         | 5432          | Base de datos                    |
-| `rabbitmq`         | 5672 / 15672  | Broker de mensajeria             |
-| `redis`            | 6379          | Cache temporal                   |
-| `app-frontend`     | 3000          | Frontend Next.js                 |
-| `service-api`      | 4000          | API Gateway                      |
-| `service-scraper`  | -             | Worker (sin puerto expuesto)     |
-| `service-simulator`| -             | Worker (sin puerto expuesto)     |
-| `service-genkit`   | -             | Worker (sin puerto expuesto)     |
+| Servicio            | Puerto | Descripcion                  |
+| :------------------ | :----- | :--------------------------- |
+| `postgres`          | 5432   | Base de datos                |
+| `kafka`             | 9092   | Bus de mensajería (KRaft)    |
+| `redis`             | 6379   | Cache temporal               |
+| `app-frontend`      | 3000   | Frontend Next.js             |
+| `service-api`       | 4000   | API Gateway                  |
+| `service-scraper`   | -      | Worker (sin puerto expuesto) |
+| `service-simulator` | -      | Worker (sin puerto expuesto) |
+| `service-genkit`    | -      | Worker (sin puerto expuesto) |
 
 ### Repositorio (Monorepo Strategy)
 
@@ -208,14 +209,17 @@ Estructura de carpetas optimizada para VS Code Workspaces:
 <!-- TODO_COUNT: 3 -->
 
 > **TODO:** Definir estrategia para transacciones distribuidas.
+>
 > - ¿Outbox pattern para garantizar que DB write + evento se publiquen atómicamente?
 > - ¿Saga pattern para flujos multi-servicio?
 
 > **TODO:** Definir política de idempotencia.
+>
 > - ¿Cómo evitar procesar el mismo partido dos veces?
 > - ¿Idempotency keys en los eventos?
 
 > **TODO:** Definir estrategia de sincronización de datos.
+>
 > - ¿Qué pasa si Sofascore actualiza datos de un partido ya analizado?
 > - ¿Re-análisis manual o automático?
 
@@ -225,19 +229,23 @@ Estructura de carpetas optimizada para VS Code Workspaces:
 
 <!-- TODO_COUNT: 4 -->
 
-> **TODO:** Configurar Dead Letter Queues (DLQ) en RabbitMQ.
+> **TODO:** Configurar Dead Letter Queues (DLQ) o Retry Topics en Kafka.
+>
 > - ¿Cuántos reintentos antes de enviar a DLQ?
 > - ¿Alertas cuando hay mensajes en DLQ?
 
 > **TODO:** Definir timeouts y circuit breakers.
+>
 > - Scraper: ¿timeout por request a Sofascore?
 > - LLM: ¿timeout y fallback si Gemini no responde?
 
 > **TODO:** Definir estrategia de health checks.
+>
 > - ¿Liveness vs Readiness probes?
 > - ¿Qué servicios deben exponer `/health`?
 
 > **TODO:** Definir comportamiento ante fallos parciales.
+>
 > - ¿Qué pasa si el Journalist falla pero la simulación ya se completó?
 > - ¿Reintentar solo el paso fallido?
 
@@ -248,19 +256,23 @@ Estructura de carpetas optimizada para VS Code Workspaces:
 <!-- TODO_COUNT: 4 -->
 
 > **TODO:** Definir autenticación y autorización.
+>
 > - ¿JWT? ¿Sessions? ¿OAuth?
 > - ¿Roles de usuario o acceso único?
 
 > **TODO:** Definir gestión de secrets.
+>
 > - API keys de LLMs (Gemini/OpenAI)
 > - Credenciales de base de datos
 > - ¿Docker secrets? ¿Vault? ¿Variables de entorno?
 
 > **TODO:** Definir rate limiting.
+>
 > - ¿Límites en API Gateway?
 > - ¿Límites hacia Sofascore para evitar bloqueos?
 
 > **TODO:** Definir política de validación de inputs.
+>
 > - ¿Sanitización de IDs de partidos?
 > - ¿Validación de payloads en eventos?
 
@@ -271,14 +283,17 @@ Estructura de carpetas optimizada para VS Code Workspaces:
 <!-- TODO_COUNT: 3 -->
 
 > **TODO:** Definir estrategia de logging.
+>
 > - ¿Formato estructurado (JSON)?
 > - ¿Logging centralizado (ELK, Loki)?
 
 > **TODO:** Definir trazabilidad de eventos.
+>
 > - ¿Correlation ID a través de todo el flujo?
 > - ¿Cómo rastrear un análisis desde request hasta report?
 
 > **TODO:** Definir métricas y alertas.
+>
 > - ¿Prometheus + Grafana?
 > - ¿Qué métricas son críticas? (latencia, errores, cola de mensajes)
 
@@ -289,12 +304,14 @@ Estructura de carpetas optimizada para VS Code Workspaces:
 <!-- TODO_COUNT: 2 -->
 
 > **TODO:** Definir estrategia de inicialización de BD.
+>
 > - Actualmente `POSTGRES_DB=football` en docker-compose solo crea la BD en el contenedor
 > - Los servicios fallan si la BD no existe o el schema no está creado
 > - ¿Script de inicialización? ¿Init container? ¿Healthcheck con retry?
 > - Ver ADR-0006 para decisión sobre herramientas
 
 > **TODO:** Definir estrategia de migraciones.
+>
 > - ¿Prisma Migrate? ¿Drizzle Kit? ¿SQL puro con herramienta tipo golang-migrate?
 > - ¿Migraciones automáticas en startup vs CI/CD controlado?
 > - ¿Rollback strategy?
