@@ -13,7 +13,7 @@ Este directorio contiene los ADRs (Architecture Decision Records) del proyecto F
 | [0004](0004-testing-calidad-codigo.md)             | Estrategia de testing y calidad de codigo | Aceptado | 2026-01-22 |
 | [0005](0005-ci-cd-git-hooks.md)                    | CI/CD y validacion local con Git Hooks    | Aceptado | 2026-01-22 |
 | [0006](0006-database-initialization-migrations.md) | Gestión de Iniciación y Migraciones de BD | Aceptado | 2026-01-22 |
-| [0007](0007-migracion-kafka.md)                    | Migración de RabbitMQ a Apache Kafka      | Aceptado | 2026-01-23 |
+| [0007](0007-migracion-kafka.md)                    | Migración a Apache Kafka                  | Aceptado | 2026-01-23 |
 
 ## Como crear un nuevo ADR
 

@@ -14,13 +14,13 @@ Debemos decidir la arquitectura interna de cada microservicio. Las opciones prin
 
 ### Analisis por servicio
 
-| Servicio | Logica de dominio | Complejidad |
-|----------|-------------------|-------------|
-| Frontend | Ninguna (UI) | Baja |
-| API Orchestrator | CRUD + eventos | Baja |
-| Scraper | ETL basico | Baja |
+| Servicio          | Logica de dominio     | Complejidad    |
+| ----------------- | --------------------- | -------------- |
+| Frontend          | Ninguna (UI)          | Baja           |
+| API Orchestrator  | CRUD + eventos        | Baja           |
+| Scraper           | ETL basico            | Baja           |
 | Simulation Engine | Algoritmo Monte Carlo | **Media-Alta** |
-| Journalist | Orquestar LLM | Media |
+| Journalist        | Orquestar LLM         | Media          |
 
 ## Decision
 
@@ -35,7 +35,7 @@ service/
 │   ├── config/           # Configuracion y variables de entorno
 │   ├── handlers/         # Entry points (eventos, HTTP)
 │   ├── services/         # Logica de negocio
-│   ├── clients/          # Integraciones externas (DB, APIs, RabbitMQ)
+│   ├── clients/          # Integraciones externas (DB, APIs, Kafka)
 │   └── types/            # Tipos locales del servicio
 ├── tests/
 ├── Dockerfile
@@ -51,7 +51,7 @@ scraper/
 │   ├── config.py         # Configuracion
 │   ├── handlers/         # Consumers de eventos
 │   ├── services/         # Logica de scraping
-│   └── clients/          # RabbitMQ, HTTP
+│   └── clients/          # Kafka, HTTP
 ├── tests/
 ├── Dockerfile
 └── requirements.txt
@@ -72,38 +72,45 @@ handlers → services → clients
 ## Alternativas Consideradas
 
 ### Opcion A: Hexagonal/Clean Architecture completa
+
 - **Pros:** Maxima separacion, muy testeable, preparado para cambios
 - **Contras:** Excesiva para servicios con poca logica, mas archivos y abstracciones
 
 ### Opcion B: Hexagonal solo en Simulation Engine
+
 - **Pros:** Aplica donde tiene sentido
 - **Contras:** Inconsistencia entre servicios, mas carga cognitiva
 
 ### Opcion C: Sin estructura definida
+
 - **Pros:** Maxima flexibilidad
 - **Contras:** Cada servicio diferente, dificil de mantener
 
 ## Consecuencias
 
 ### Positivas
+
 - Estructura consistente y predecible
 - Facil de entender para nuevos desarrolladores
 - Suficiente separacion para testing
 - Rapido de implementar
 
 ### Negativas
+
 - Menos separacion que Hexagonal (logica puede acoplarse a I/O)
 - Podria requerir refactor si crece la complejidad
 
 ### Riesgos
+
 - Simulation Engine podria necesitar refactor a Hexagonal en el futuro
 - Mitigacion: Mantener `services/` lo mas puro posible desde el inicio
 
 ## Criterio de re-evaluacion
 
 Reconsiderar Hexagonal si:
+
 - Un servicio supera 10 archivos en `services/`
-- Se necesitan multiples implementaciones de una integracion (ej: cambiar de RabbitMQ a Kafka)
+- Se necesitan multiples implementaciones de una integracion (ej: cambiar de un bus de eventos a otro)
 - Los tests requieren mocks excesivos
 
 ## Referencias

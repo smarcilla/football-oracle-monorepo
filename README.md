@@ -26,11 +26,11 @@ pnpm run dev
 
 ### URLs disponibles
 
-| Servicio | URL | Descripcion |
-|----------|-----|-------------|
+| Servicio | URL                   | Descripcion         |
+| -------- | --------------------- | ------------------- |
 | Frontend | http://localhost:3000 | Interfaz de usuario |
-| API | http://localhost:4000 | API Gateway |
-| RabbitMQ Management | http://localhost:15672 | Panel de RabbitMQ (user: football, pass: football) |
+| API      | http://localhost:4000 | API Gateway         |
+| Kafka    | localhost:9092        | Bus de eventos      |
 
 ### Probar el flujo
 
