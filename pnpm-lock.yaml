@@ -10,6 +10,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@football-oracle/kafka':
+        specifier: workspace:*
+        version: link:../../packages/kafka
       express:
         specifier: ^4.21.0
         version: 4.22.1
@@ -55,6 +58,16 @@ importers:
         specifier: ^5.6.0
         version: 5.9.3
 
+  packages/kafka:
+    dependencies:
+      kafkajs:
+        specifier: ^2.2.4
+        version: 2.2.4
+    devDependencies:
+      typescript:
+        specifier: ^5.6.0
+        version: 5.9.3
+
   packages/types:
     devDependencies:
       typescript:
@@ -63,6 +76,9 @@ importers:
 
   services/engine:
     dependencies:
+      '@football-oracle/kafka':
+        specifier: workspace:*
+        version: link:../../packages/kafka
       kafkajs:
         specifier: ^2.2.4
         version: 2.2.4
@@ -79,6 +95,9 @@ importers:
 
   services/journalist:
     dependencies:
+      '@football-oracle/kafka':
+        specifier: workspace:*
+        version: link:../../packages/kafka
       kafkajs:
         specifier: ^2.2.4
         version: 2.2.4

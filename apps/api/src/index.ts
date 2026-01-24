@@ -1,6 +1,6 @@
 import express from "express";
 import { config } from "./config/index.js";
-import { connectKafka, subscribe } from "./clients/kafka.js";
+import { initKafka, subscribe } from "@football-oracle/kafka";
 import { analyzeMatch } from "./handlers/analyze.js";
 
 const app = express();
@@ -26,20 +26,25 @@ app.get("/health", (_, res) => {
 app.post("/analyze/:id?", analyzeMatch);
 
 async function start(): Promise<void> {
-  // Connect to Kafka
-  await connectKafka();
+  // Initialize Kafka
+  try {
+    await initKafka(config.kafka);
 
-  // Subscribe to final event
-  await subscribe("match.report_ready", async (message) => {
-    console.log("[API] ========================================");
-    console.log("[API] FLOW COMPLETED! Report ready:", message);
-    console.log("[API] ========================================");
-  });
+    // Subscribe to final event (don't await to not block server startup)
+    subscribe("match.report_ready", async (message: any) => {
+      console.log("[API] ========================================");
+      console.log("[API] FLOW COMPLETED! Report ready:", message);
+      console.log("[API] ========================================");
+    }).catch((err) => console.error("[API] Kafka subscription error:", err));
+  } catch (err) {
+    console.error("[API] Kafka initialization failed:", err);
+  }
 
   // Start server
   app.listen(config.port, () => {
     console.log(`[API] Server running on port ${config.port}`);
   });
 }
+
 
 start().catch(console.error);

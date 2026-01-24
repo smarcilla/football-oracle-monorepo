@@ -1,4 +1,4 @@
-import { publish } from "../clients/kafka.js";
+import { publish } from "@football-oracle/kafka";
 
 interface ShotData {
   matchId: string;

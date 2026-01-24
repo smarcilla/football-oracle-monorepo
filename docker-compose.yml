@@ -55,8 +55,8 @@ services:
   # Applications
   web:
     build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/web/Dockerfile
     ports:
       - "3000:3000"
     environment:
@@ -67,8 +67,8 @@ services:
 
   api:
     build:
-      context: ./apps/api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/api/Dockerfile
     ports:
       - "4000:4000"
     environment:
@@ -102,8 +102,8 @@ services:
 
   engine:
     build:
-      context: ./services/engine
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/engine/Dockerfile
     environment:
       - KAFKA_BROKERS=kafka:29092
     depends_on:
@@ -112,8 +112,8 @@ services:
 
   journalist:
     build:
-      context: ./services/journalist
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/journalist/Dockerfile
     environment:
       - KAFKA_BROKERS=kafka:29092
     depends_on:

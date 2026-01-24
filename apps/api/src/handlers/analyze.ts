@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { publish } from "../clients/kafka.js";
+import { publish } from "@football-oracle/kafka";
 
 export async function analyzeMatch(req: Request, res: Response): Promise<void> {
   const matchId = req.params.id || "test-match-123";

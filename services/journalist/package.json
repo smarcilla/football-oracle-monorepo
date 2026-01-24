@@ -9,6 +9,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@football-oracle/kafka": "workspace:*",
     "kafkajs": "^2.2.4"
   },
   "devDependencies": {
