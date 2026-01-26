@@ -43,12 +43,12 @@ async function start(): Promise<void> {
     await initKafka(config.kafka);
 
     // Subscribe to final event (don't await to not block server startup)
-    void subscribe('match.report_ready', (message: object) => {
+    await subscribe('match.report_ready', (message: object) => {
       console.log('[API] ========================================');
       console.log('[API] FLOW COMPLETED! Report ready:', message);
       console.log('[API] ========================================');
       return Promise.resolve();
-    }).catch((err: unknown) => console.error('[API] Kafka subscription error:', err));
+    });
   } catch (err) {
     console.error('[API] Kafka initialization failed:', err);
   }
