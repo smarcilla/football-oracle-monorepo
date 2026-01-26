@@ -14,6 +14,7 @@
     "lint:python:fix": "ruff check services/scraper --fix",
     "typecheck": "tsc --noEmit && pyright",
     "test": "pnpm -r --if-present test",
+    "test:coverage": "pnpm -r --if-present test:coverage",
     "build": "pnpm -r build",
     "format": "prettier --write . && ruff format services/scraper",
     "sonar": "sonar-scanner -Dsonar.token=${SONAR_TOKEN}",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
@@ -47,7 +49,8 @@
     "prettier": "^3.8.1",
     "pyright": "^1.1.408",
     "sonarqube-scanner": "^4.3.4",
+    "typescript": "^5.6.0",
     "typescript-eslint": "^8.53.1",
-    "typescript": "^5.6.0"
+    "vitest": "^4.0.18"
   }
 }

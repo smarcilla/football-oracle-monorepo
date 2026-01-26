@@ -26,11 +26,11 @@ Establecer las bases de calidad del código, automatización de pruebas y pipeli
 
 ## Estrategia de Testing
 
-| Nivel            | Herramienta             | Alcance                           | Estado    |
-| ---------------- | ----------------------- | --------------------------------- | --------- |
-| **Unit Testing** | Vitest                  | Lógica de negocio y utilidades    | Pendiente |
-| **Integration**  | Supertest / Kafka Mocks | Flujos entre servicios            | Pendiente |
-| **Python Tests** | Pytest                  | Scraping y procesamiento de datos | Pendiente |
+| Nivel            | Herramienta             | Alcance                           | Estado      |
+| ---------------- | ----------------------- | --------------------------------- | ----------- |
+| **Unit Testing** | Vitest                  | Lógica de negocio y utilidades    | Configurado |
+| **Integration**  | Supertest / Kafka Mocks | Flujos entre servicios            | Pendiente   |
+| **Python Tests** | Pytest                  | Scraping y procesamiento de datos | Pendiente   |
 
 ## CI/CD Pipeline (GitHub Actions)
 
@@ -50,7 +50,7 @@ Se implementará un workflow principal `.github/workflows/ci.yml` que incluya:
 - [x] Configuración de SonarLint para VSCode (local).
 - [x] Implementación de Git Hooks con Husky.
 - [ ] Pipeline de GitHub Actions funcional.
-- [ ] Estructura de carpetas para tests en cada servicio.
+- [x] Estructura de carpetas para tests en cada servicio.
 
 ## Cómo validar esta fase
 

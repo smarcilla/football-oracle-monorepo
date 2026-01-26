@@ -17,6 +17,7 @@ export default tseslint.config(
       'services/scraper/**', // Python service
       'apps/web/next.config.js',
       'eslint.config.js',
+      '**/vitest.config.ts',
     ],
   },
   js.configs.recommended,
