@@ -12,7 +12,8 @@
     "lint:js:fix": "eslint . --fix",
     "lint:python": "ruff check services/scraper",
     "lint:python:fix": "ruff check services/scraper --fix",
-    "format": "prettier --write . && ruff format services/scraper"
+    "format": "prettier --write . && ruff format services/scraper",
+    "sonar": "sonar-scanner -Dsonar.token=${SONAR_TOKEN}"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -26,6 +27,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^17.1.0",
     "prettier": "^3.8.1",
+    "sonarqube-scanner": "^4.3.4",
     "typescript-eslint": "^8.53.1"
   }
 }

@@ -20,7 +20,7 @@ Establecer las bases de calidad del código, automatización de pruebas y pipeli
 | **ESLint**     | Linting para TypeScript (API, Web, Engine, Journalist) | Configurado |
 | **Prettier**   | Formateo de código universal                           | Configurado |
 | **Ruff**       | Linting y formateo para Python (Scraper)               | Configurado |
-| **SonarCloud** | Análisis de deuda técnica y calidad (Cloud + Local)    | Pendiente   |
+| **SonarCloud** | Análisis de deuda técnica y calidad (Cloud + Local)    | Configurado |
 | **Husky**      | Git Hooks (pre-commit, pre-push)                       | Pendiente   |
 | **Commitlint** | Validación de mensajes de commit                       | Pendiente   |
 
@@ -46,7 +46,7 @@ Se implementará un workflow principal `.github/workflows/ci.yml` que incluya:
 
 - [x] Configuración de ESLint/Prettier en la raíz y paquetes.
 - [x] Configuración de Ruff para el servicio Python.
-- [ ] Integración de SonarCloud (archivo `sonar-project.properties` y GitHub Action).
+- [x] Integración de SonarCloud (archivo `sonar-project.properties` y GitHub Action).
 - [ ] Configuración de SonarLint para VSCode (local).
 - [ ] Implementación de Git Hooks con Husky.
 - [ ] Pipeline de GitHub Actions funcional.

@@ -58,4 +58,8 @@ async function start(): Promise<void> {
   });
 }
 
-start().catch(console.error);
+try {
+  await start();
+} catch {
+  console.error('Failed to start the server');
+}
