@@ -1,4 +1,3 @@
-import time
 from src.clients.kafka import subscribe
 from src.handlers.analysis import handle_analysis_requested
 
