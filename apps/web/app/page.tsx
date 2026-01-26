@@ -11,7 +11,7 @@ export default function Home() {
     setStatus('Starting analysis...');
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const apiUrl = process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:4000';
       const response = await fetch(`${apiUrl}/analyze/test-match-123`, {
         method: 'POST',
       });
