@@ -1,9 +1,11 @@
-import express from 'express';
+import express, { Express } from 'express';
 import { config } from './config/index.js';
 import { initKafka, subscribe } from '@football-oracle/kafka';
 import { analyzeMatch } from './handlers/analyze.js';
 
-const app = express();
+const app: Express = express();
+export { app };
+
 app.use(express.json());
 
 // CORS for frontend
@@ -24,7 +26,8 @@ app.get('/health', (_, res) => {
 });
 
 // Trigger analysis
-app.post('/analyze/:id?', analyzeMatch);
+app.post('/analyze', analyzeMatch);
+app.post('/analyze/:id', analyzeMatch);
 
 // Global Error Handler
 app.use(
@@ -59,8 +62,10 @@ async function start(): Promise<void> {
   });
 }
 
-try {
-  await start();
-} catch {
-  console.error('Failed to start the server');
+if (process.env['NODE_ENV'] !== 'test') {
+  try {
+    await start();
+  } catch {
+    console.error('Failed to start the server');
+  }
 }

@@ -6,7 +6,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --exclude **/*.integration.test.ts",
+    "test:integration": "vitest run **/*.integration.test.ts",
     "test:coverage": "vitest run --coverage",
     "build": "tsc"
   },

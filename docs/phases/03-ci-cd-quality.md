@@ -29,7 +29,7 @@ Establecer las bases de calidad del código, automatización de pruebas y pipeli
 | Nivel            | Herramienta             | Alcance                           | Estado      |
 | ---------------- | ----------------------- | --------------------------------- | ----------- |
 | **Unit Testing** | Vitest                  | Lógica de negocio y utilidades    | Configurado |
-| **Integration**  | Supertest / Kafka Mocks | Flujos entre servicios            | Pendiente   |
+| **Integration**  | Supertest / Kafka Mocks | Flujos entre servicios            | Configurado |
 | **Python Tests** | Pytest                  | Scraping y procesamiento de datos | Pendiente   |
 
 ## CI/CD Pipeline (GitHub Actions)

@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "test": "vitest run",
+    "test": "vitest run --exclude **/*.integration.test.ts",
+    "test:integration": "vitest run **/*.integration.test.ts",
     "test:coverage": "vitest run --coverage",
     "build": "next build",
     "start": "next start"
