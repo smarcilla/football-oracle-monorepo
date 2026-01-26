@@ -4,7 +4,7 @@ import React from 'react';
 import Page from './page';
 
 // Mock fetch globally
-global.fetch = vi.fn();
+globalThis.fetch = vi.fn();
 
 describe('Web App Unit Test', () => {
   it('renders the main heading', () => {
