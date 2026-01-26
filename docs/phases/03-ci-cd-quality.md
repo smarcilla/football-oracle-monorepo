@@ -15,14 +15,14 @@ Establecer las bases de calidad del código, automatización de pruebas y pipeli
 
 ## Requisitos de Calidad
 
-| Herramienta    | Aplicación                                             | Estado    |
-| -------------- | ------------------------------------------------------ | --------- |
-| **ESLint**     | Linting para TypeScript (API, Web, Engine, Journalist) | Pendiente |
-| **Prettier**   | Formateo de código universal                           | Pendiente |
-| **Ruff**       | Linting y formateo para Python (Scraper)               | Pendiente |
-| **SonarCloud** | Análisis de deuda técnica y calidad (Cloud + Local)    | Pendiente |
-| **Husky**      | Git Hooks (pre-commit, pre-push)                       | Pendiente |
-| **Commitlint** | Validación de mensajes de commit                       | Pendiente |
+| Herramienta    | Aplicación                                             | Estado      |
+| -------------- | ------------------------------------------------------ | ----------- |
+| **ESLint**     | Linting para TypeScript (API, Web, Engine, Journalist) | Configurado |
+| **Prettier**   | Formateo de código universal                           | Configurado |
+| **Ruff**       | Linting y formateo para Python (Scraper)               | Pendiente   |
+| **SonarCloud** | Análisis de deuda técnica y calidad (Cloud + Local)    | Pendiente   |
+| **Husky**      | Git Hooks (pre-commit, pre-push)                       | Pendiente   |
+| **Commitlint** | Validación de mensajes de commit                       | Pendiente   |
 
 ## Estrategia de Testing
 
@@ -44,7 +44,7 @@ Se implementará un workflow principal `.github/workflows/ci.yml` que incluya:
 
 ## Entregables Técnicos
 
-- [ ] Configuración de ESLint/Prettier en la raíz y paquetes.
+- [x] Configuración de ESLint/Prettier en la raíz y paquetes.
 - [ ] Configuración de Ruff para el servicio Python.
 - [ ] Integración de SonarCloud (archivo `sonar-project.properties` y GitHub Action).
 - [ ] Configuración de SonarLint para VSCode (local).

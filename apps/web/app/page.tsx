@@ -1,29 +1,34 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
 export default function Home() {
-  const [status, setStatus] = useState<string>('')
-  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState<string>('');
+  const [loading, setLoading] = useState(false);
 
   const analyzeMatch = async () => {
-    setLoading(true)
-    setStatus('Starting analysis...')
+    setLoading(true);
+    setStatus('Starting analysis...');
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
       const response = await fetch(`${apiUrl}/analyze/test-match-123`, {
         method: 'POST',
-      })
+      });
 
-      const data = await response.json()
-      setStatus(`Analysis started! Check service logs for the complete flow.`)
+      if (!response.ok) throw new Error('Failed to start analysis');
+
+      setStatus(`Analysis started! Check service logs for the complete flow.`);
     } catch (error) {
-      setStatus(`Error: ${error}`)
+      setStatus(`Error: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+  const handleAnalyze = () => {
+    void analyzeMatch();
+  };
 
   return (
     <main>
@@ -32,7 +37,7 @@ export default function Home() {
 
       <div style={{ marginTop: '2rem' }}>
         <button
-          onClick={analyzeMatch}
+          onClick={handleAnalyze}
           disabled={loading}
           style={{
             padding: '1rem 2rem',
@@ -72,5 +77,5 @@ export default function Home() {
         </ol>
       </div>
     </main>
-  )
+  );
 }

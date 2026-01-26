@@ -50,17 +50,9 @@ Ejecuta antes de push (puede ser mas lento):
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ],
-    "*.py": [
-      "ruff check --fix",
-      "black"
-    ]
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md}": ["prettier --write"],
+    "*.py": ["ruff check --fix", "black"]
   }
 }
 ```
@@ -153,40 +145,46 @@ Configurar en `main`:
 ## Alternativas Consideradas
 
 ### Local: Sin hooks
+
 - **Pros:** Menos friccion para commits rapidos
 - **Contras:** Errores llegan a CI, feedback tardio
 
 ### Local: Lefthook (en lugar de Husky)
+
 - **Pros:** Mas rapido, escrito en Go
 - **Contras:** Menos adopcion, Husky es el estandar
 
 ### CI: GitLab CI / CircleCI
+
 - **Pros:** Mas features en algunos casos
 - **Contras:** GitHub Actions es nativo, menos config
 
 ## Consecuencias
 
 ### Positivas
+
 - Errores detectados antes de llegar a CI
 - PRs siempre pasan validaciones minimas
 - Formato consistente automaticamente
 
 ### Negativas
+
 - Pre-commit hooks pueden ser lentos si no se usa lint-staged
 - Desarrolladores pueden saltarse hooks (--no-verify)
 
 ### Riesgos
+
 - Hooks muy lentos frustran al equipo → mantener pre-commit < 10s
 - Mitigacion: Solo lint/format en pre-commit, tests en pre-push o CI
 
 ## Implementacion
 
-| Fase | Tarea | Prioridad |
-|------|-------|-----------|
-| Walking Skeleton | No implementar (foco en integracion) | - |
-| Post-skeleton | Configurar Husky + lint-staged | Alta |
-| Post-skeleton | Crear GitHub Actions workflows | Alta |
-| Post-skeleton | Configurar branch protection | Media |
+| Fase             | Tarea                                | Prioridad |
+| ---------------- | ------------------------------------ | --------- |
+| Walking Skeleton | No implementar (foco en integracion) | -         |
+| Post-skeleton    | Configurar Husky + lint-staged       | Alta      |
+| Post-skeleton    | Crear GitHub Actions workflows       | Alta      |
+| Post-skeleton    | Configurar branch protection         | Media     |
 
 ## Referencias
 
