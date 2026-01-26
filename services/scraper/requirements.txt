@@ -1,2 +1,4 @@
 confluent-kafka==2.3.0
 ruff==0.14.14
+pytest==8.0.0
+pytest-cov==4.1.0

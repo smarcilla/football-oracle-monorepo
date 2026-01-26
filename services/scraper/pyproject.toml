@@ -50,6 +50,11 @@ unfixable = []
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "--cov=src --cov-report=term-missing --cov-report=lcov:coverage/lcov.info"
+
 [tool.ruff.format]
 # Like Black, use double quotes for strings.
 quote-style = "double"
