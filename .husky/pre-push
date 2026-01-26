@@ -1,0 +1,11 @@
+echo "Running pre-push checks..."
+
+# Unit tests
+echo "Running tests..."
+pnpm test -- --run || exit 1
+
+# Build
+echo "Building..."
+pnpm build || exit 1
+
+echo "Pre-push checks passed!"

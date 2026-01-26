@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    { "path": "./apps/api" },
+    { "path": "./apps/web" },
+    { "path": "./services/engine" },
+    { "path": "./services/journalist" },
+    { "path": "./packages/kafka" },
+    { "path": "./packages/types" }
+  ]
+}
