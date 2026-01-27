@@ -7,16 +7,36 @@ export interface MatchAnalysisRequested {
 
 export interface MatchDataExtracted {
   matchId: string;
-  homeTeam: string;
-  awayTeam: string;
-  shots: Shot[];
+  metadata: {
+    league: string;
+    homeTeam: TeamMetadata;
+    awayTeam: TeamMetadata;
+    realScore: {
+      home: number;
+      away: number;
+    };
+  };
+  shots: ShotEvent[];
+  scrapedAt: string;
 }
 
-export interface Shot {
-  player: string;
-  xG: number;
+export interface TeamMetadata {
+  id: number;
+  name: string;
+  colors: {
+    primary: string;
+    secondary?: string;
+  };
+}
+
+export interface ShotEvent {
+  playerName: string;
   team: 'home' | 'away';
-  result: string;
+  minute: number;
+  xg: number;
+  result: 'goal' | 'miss' | 'save' | 'block';
+  situation: string;
+  bodyPart: string;
 }
 
 export interface MatchSimulationCompleted {

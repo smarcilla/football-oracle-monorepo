@@ -3,7 +3,7 @@ import { publish } from '@football-oracle/kafka';
 
 export async function analyzeMatch(req: Request, res: Response): Promise<void> {
   const { id } = req.params;
-  const matchId = typeof id === 'string' ? id : 'test-match-123';
+  const matchId = typeof id === 'string' ? id : '15129439';
 
   console.log(`[API] Received analyze request for match: ${matchId}`);
 

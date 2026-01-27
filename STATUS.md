@@ -1,25 +1,25 @@
 # Project Status
 
 > Este fichero mantiene el estado actual del proyecto para continuidad entre sesiones.  
-> **Ultima actualizacion:** 2026-01-23
+> **Ultima actualizacion:** 2026-01-27
 
 ## Estado Actual
 
-**Fase:** CI/CD y Calidad (Phase 3)  
-**Branch activa:** `phase-3-ci-cd-quality`  
-**Proximo paso:** Implementar Scraper real (Fase 4)
+**Fase:** Implementación de Scrapers (Phase 4)  
+**Branch activa:** `phase-4-scrapers-sofascocore`  
+**Proximo paso:** Implementar cliente Sofascore en servicio scraper
 
 ## Roadmap
 
-| Fase                  | Descripcion                                               | Estado                    |
-| --------------------- | --------------------------------------------------------- | ------------------------- |
-| 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales                          | Completado                |
-| 2. Walking Skeleton   | Infraestructura + servicios mock (ADR-0002)               | Completado                |
-| 3. CI/CD y calidad    | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | En progreso (CI/CD listo) |
-| 4. Scraper real       | Integracion con Sofascore/ScraperFC                       | Pendiente                 |
-| 5. Simulation Engine  | Algoritmo Monte Carlo                                     | Pendiente                 |
-| 6. Journalist Agent   | Integracion Genkit + LLM                                  | Pendiente                 |
-| 7. Frontend completo  | UI con visualizaciones                                    | Pendiente                 |
+| Fase                  | Descripcion                                               | Estado      |
+| --------------------- | --------------------------------------------------------- | ----------- |
+| 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales                          | Completado  |
+| 2. Walking Skeleton   | Infraestructura + servicios mock (ADR-0002)               | Completado  |
+| 3. CI/CD y calidad    | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | Completado  |
+| 4. Scraper real       | Integracion con Sofascore/ScraperFC                       | En progreso |
+| 5. Simulation Engine  | Algoritmo Monte Carlo                                     | Pendiente   |
+| 6. Journalist Agent   | Integracion Genkit + LLM                                  | Pendiente   |
+| 7. Frontend completo  | UI con visualizaciones                                    | Pendiente   |
 
 ## Trabajo en Progreso
 

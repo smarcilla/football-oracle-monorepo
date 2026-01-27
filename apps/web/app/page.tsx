@@ -12,7 +12,7 @@ export default function Home() {
 
     try {
       const apiUrl = process.env['NEXT_PUBLIC_API_URL'] || 'http://localhost:4000';
-      const response = await fetch(`${apiUrl}/analyze/test-match-123`, {
+      const response = await fetch(`${apiUrl}/analyze/15129439`, {
         method: 'POST',
       });
 

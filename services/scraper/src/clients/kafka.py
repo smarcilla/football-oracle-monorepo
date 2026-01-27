@@ -10,7 +10,9 @@ def get_producer():
     if _producer is None:
         _producer = Producer({
             "bootstrap.servers": KAFKA_BROKERS,
-            "client.id": KAFKA_CLIENT_ID
+            "client.id": KAFKA_CLIENT_ID,
+            "linger.ms": 0,  # Entrega inmediata
+            "acks": "all"
         })
     return _producer
 
@@ -29,7 +31,10 @@ def subscribe(topic: str, handler):
     consumer = Consumer({
         "bootstrap.servers": KAFKA_BROKERS,
         "group.id": KAFKA_GROUP_ID,
-        "auto.offset.reset": "earliest"
+        "auto.offset.reset": "earliest",
+        "enable.auto.commit": True,
+        "fetch.min.bytes": 1,
+        "fetch.wait.max.ms": 500,
     })
 
     consumer.subscribe([topic])

@@ -19,7 +19,10 @@ export async function initKafka(config: KafkaConfig): Promise<void> {
   });
   currentGroupId = config.groupId;
 
-  producer = kafka.producer();
+  producer = kafka.producer({
+    allowAutoTopicCreation: true,
+    transactionTimeout: 30000,
+  });
   await producer.connect();
   console.log(`[Kafka] Connected as ${config.clientId}`);
 }
@@ -67,11 +70,16 @@ export async function subscribe(
     throw new Error('Kafka not initialized. Call initKafka(config) first.');
   }
 
-  const consumer = kafka.consumer({ groupId: currentGroupId });
+  const consumer = kafka.consumer({
+    groupId: currentGroupId,
+    sessionTimeout: 30000,
+    heartbeatInterval: 3000,
+  });
   await consumer.connect();
   await consumer.subscribe({ topic, fromBeginning: true });
 
   await consumer.run({
+    partitionsConsumedConcurrently: 1,
     eachMessage: async ({ message }) => {
       if (message.value) {
         const content = JSON.parse(message.value.toString()) as object;
