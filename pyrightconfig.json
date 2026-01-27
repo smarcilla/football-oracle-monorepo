@@ -1,0 +1,11 @@
+{
+  "include": ["services/scraper/src", "services/scraper/tests"],
+  "exclude": ["**/node_modules", "**/__pycache__", "services/scraper/.venv"],
+  "executionEnvironments": [
+    {
+      "root": "services/scraper",
+      "venvPath": "services/scraper",
+      "venv": ".venv"
+    }
+  ]
+}

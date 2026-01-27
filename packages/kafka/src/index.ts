@@ -24,6 +24,28 @@ export async function initKafka(config: KafkaConfig): Promise<void> {
   console.log(`[Kafka] Connected as ${config.clientId}`);
 }
 
+export async function ensureTopics(topics: string[]): Promise<void> {
+  if (!kafka) {
+    throw new Error('Kafka not initialized. Call initKafka(config) first.');
+  }
+
+  const admin = kafka.admin();
+  await admin.connect();
+  const existingTopics = await admin.listTopics();
+
+  const topicsToCreate = topics.filter((topic) => !existingTopics.includes(topic));
+  if (topicsToCreate.length > 0) {
+    await admin.createTopics({
+      topics: topicsToCreate.map((topic) => ({ topic })),
+    });
+    console.log(`[Kafka] Created topics: ${topicsToCreate.join(', ')}`);
+  } else {
+    console.log('[Kafka] All topics already exist.');
+  }
+
+  await admin.disconnect();
+}
+
 export async function publish(topic: string, message: object): Promise<void> {
   if (!producer) {
     throw new Error('Kafka not initialized. Call initKafka(config) first.');

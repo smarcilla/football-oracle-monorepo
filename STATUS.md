@@ -5,38 +5,31 @@
 
 ## Estado Actual
 
-**Fase:** Walking Skeleton (Kafka Refactor Completed)  
-**Branch activa:** `feat/migration-kafka`  
-**Proximo paso:** Resolver ADR-0006 y TODOs de Base de Datos (PostgreSQL)
+**Fase:** CI/CD y Calidad (Phase 3)  
+**Branch activa:** `phase-3-ci-cd-quality`  
+**Proximo paso:** Implementar Scraper real (Fase 4)
 
 ## Roadmap
 
-| Fase                  | Descripcion                                               | Estado                     |
-| --------------------- | --------------------------------------------------------- | -------------------------- |
-| 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales                          | Completado                 |
-| 2. Walking Skeleton   | Infraestructura + servicios mock (ADR-0002)               | En progreso (PR pendiente) |
-| 3. CI/CD y calidad    | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | Pendiente                  |
-| 4. Scraper real       | Integracion con Sofascore/ScraperFC                       | Pendiente                  |
-| 5. Simulation Engine  | Algoritmo Monte Carlo                                     | Pendiente                  |
-| 6. Journalist Agent   | Integracion Genkit + LLM                                  | Pendiente                  |
-| 7. Frontend completo  | UI con visualizaciones                                    | Pendiente                  |
+| Fase                  | Descripcion                                               | Estado                    |
+| --------------------- | --------------------------------------------------------- | ------------------------- |
+| 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales                          | Completado                |
+| 2. Walking Skeleton   | Infraestructura + servicios mock (ADR-0002)               | Completado                |
+| 3. CI/CD y calidad    | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | En progreso (CI/CD listo) |
+| 4. Scraper real       | Integracion con Sofascore/ScraperFC                       | Pendiente                 |
+| 5. Simulation Engine  | Algoritmo Monte Carlo                                     | Pendiente                 |
+| 6. Journalist Agent   | Integracion Genkit + LLM                                  | Pendiente                 |
+| 7. Frontend completo  | UI con visualizaciones                                    | Pendiente                 |
 
 ## Trabajo en Progreso
 
-### Branch: `feat/migration-kafka`
+### Branch: `phase-3-ci-cd-quality`
 
-- [x] Estructura monorepo con pnpm workspaces
-- [x] docker-compose.yml (PostgreSQL, Kafka, Redis)
-- [x] apps/api - Express con Kafka (kafkajs)
-- [x] apps/web - Next.js frontend
-- [x] services/scraper - Python worker (confluent-kafka)
-- [x] services/engine - Node simulation engine (kafkajs)
-- [x] services/journalist - Node report generator (kafkajs)
-- [x] packages/types - Tipos TypeScript compartidos
-- [x] Flujo completo probado end-to-end con Kafka
-- [x] Documentacion en docs/phases/02-walking-skeleton.md
-- [ ] Crear PR
-- [ ] Merge a main
+- [x] Pipeline de CI en GitHub Actions (.github/workflows/ci.yml)
+- [x] Restricción de Node.js 25 y Python 3.11
+- [x] Configuración de SonarCloud con cobertura combinada
+- [x] Plan de validación local (docs/tests/ci-validation-plan.md)
+- [ ] Ejecutar plan de validación y merge a main
 
 ## Arquitectura Implementada
 

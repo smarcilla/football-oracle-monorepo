@@ -1,9 +1,10 @@
 import express, { Express } from 'express';
 import { config } from './config/index.js';
-import { initKafka, subscribe } from '@football-oracle/kafka';
+import { initKafka, subscribe, ensureTopics } from '@football-oracle/kafka';
 import { analyzeMatch } from './handlers/analyze.js';
 
 const app: Express = express();
+app.disable('x-powered-by');
 export { app };
 
 app.use(express.json());
@@ -44,6 +45,9 @@ async function start(): Promise<void> {
   // Initialize Kafka
   try {
     await initKafka(config.kafka);
+
+    // Call ensureTopics if needed
+    await ensureTopics(['match.analysis_requested', 'match.report_ready']);
 
     // Subscribe to final event (don't await to not block server startup)
     await subscribe('match.report_ready', (message: object) => {

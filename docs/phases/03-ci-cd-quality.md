@@ -22,7 +22,6 @@ Establecer las bases de calidad del código, automatización de pruebas y pipeli
 | **Ruff**       | Linting y formateo para Python (Scraper)               | Configurado |
 | **SonarCloud** | Análisis de deuda técnica y calidad (Cloud + Local)    | Configurado |
 | **Husky**      | Git Hooks (pre-commit, pre-push)                       | Configurado |
-| **Commitlint** | Validación de mensajes de commit                       | Pendiente   |
 
 ## Estrategia de Testing
 
@@ -49,23 +48,16 @@ Se implementará un workflow principal `.github/workflows/ci.yml` que incluya:
 - [x] Integración de SonarCloud (archivo `sonar-project.properties` y GitHub Action).
 - [x] Configuración de SonarLint para VSCode (local).
 - [x] Implementación de Git Hooks con Husky.
-- [ ] Pipeline de GitHub Actions funcional.
+- [x] Pipeline de GitHub Actions funcional.
 - [x] Estructura de carpetas para tests en cada servicio.
 
 ## Cómo validar esta fase
 
-### 1. Ejecución Local de Linters
+Se ha diseñado un [Plan de Validación Local](../tests/ci-validation-plan.md) detallado que cubre:
 
-```bash
-pnpm run lint
-```
+1. Restricción de versiones (Node 25+).
+2. Consistencia de dependencias (Frozen lockfile).
+3. Ciclo completo de calidad (Lint, Typecheck, Tests).
+4. Verificación de Git Hooks (Husky).
 
-### 2. Ejecución Local de Tests
-
-```bash
-pnpm run test
-```
-
-### 3. Git Hooks
-
-Intentar realizar un commit que no cumpla con las reglas de linting o formato para verificar que Husky lo bloquea.
+### Resumen de comandos rápidos:

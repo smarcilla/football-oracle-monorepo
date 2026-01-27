@@ -1,0 +1,33 @@
+# Node.js
+node_modules/
+dist/
+coverage/
+.npm/
+
+# TypeScript/Next.js
+.next/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+
+# Environment/Secrets
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# Git/OS
+.git/
+.gitignore
+.dockerignore
+.github/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,8 +1,8 @@
-FROM node:20-alpine AS builder
+FROM node:25-alpine AS builder
 
 WORKDIR /app
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm --ignore-scripts
 
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY apps/api/package.json ./apps/api/
@@ -12,12 +12,17 @@ COPY services/journalist/package.json ./services/journalist/
 COPY packages/kafka/package.json ./packages/kafka/
 COPY packages/types/package.json ./packages/types/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
-COPY . .
+COPY tsconfig.base.json ./
+COPY tsconfig.json ./
+COPY apps/web ./apps/web
+COPY packages/kafka ./packages/kafka
+COPY packages/types ./packages/types
+
 RUN pnpm --filter @football-oracle/web build
 
-FROM node:20-alpine AS runner
+FROM node:25-alpine AS runner
 
 WORKDIR /app
 
@@ -25,6 +30,8 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
+
+USER node
 
 EXPOSE 3000
 
