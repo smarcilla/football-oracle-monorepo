@@ -37,6 +37,9 @@ jobs:
       - name: Install JS dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      - name: Build Internal Packages (Pre-requisito para Lint/Typecheck)
+        run: pnpm --filter "./packages/**" build
+
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip

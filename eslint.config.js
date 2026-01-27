@@ -18,6 +18,7 @@ export default tseslint.config(
       'apps/web/next.config.js',
       'eslint.config.js',
       '**/vitest.config.ts',
+      '**/*.js',
     ],
   },
   js.configs.recommended,
