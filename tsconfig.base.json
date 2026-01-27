@@ -30,6 +30,10 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "paths": {
+      "@football-oracle/kafka": ["packages/kafka/src/index.ts"],
+      "@football-oracle/types": ["packages/types/src/index.ts"]
+    }
   }
 }
