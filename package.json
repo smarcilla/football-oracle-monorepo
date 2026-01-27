@@ -2,7 +2,6 @@
   "name": "football-oracle",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "docker-compose up",
     "dev:build": "docker-compose up --build",
