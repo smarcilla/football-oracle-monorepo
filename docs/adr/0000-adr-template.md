@@ -15,22 +15,27 @@
 ## Alternativas Consideradas
 
 ### Opcion A: [Nombre]
+
 - **Pros:** ...
 - **Contras:** ...
 
 ### Opcion B: [Nombre]
+
 - **Pros:** ...
 - **Contras:** ...
 
 ## Consecuencias
 
 ### Positivas
+
 - ...
 
 ### Negativas
+
 - ...
 
 ### Riesgos
+
 - ...
 
 ## Referencias

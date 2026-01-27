@@ -1,13 +1,61 @@
 {
   "name": "football-oracle",
   "private": true,
-  "packageManager": "pnpm@9.15.0",
+  "type": "module",
   "scripts": {
     "dev": "docker-compose up",
     "dev:build": "docker-compose up --build",
-    "down": "docker-compose down"
+    "down": "docker-compose down",
+    "lint": "pnpm run lint:js && pnpm run lint:python",
+    "lint:js": "eslint .",
+    "lint:js:fix": "eslint . --fix",
+    "lint:python": "ruff check services/scraper",
+    "lint:python:fix": "ruff check services/scraper --fix",
+    "typecheck": "tsc --noEmit && pyright",
+    "test": "pnpm -r --if-present test && pnpm run test:python",
+    "test:python": "cd services/scraper && pytest",
+    "test:integration": "pnpm -r --if-present test:integration",
+    "test:coverage": "pnpm -r --if-present test:coverage && pnpm run test:python:coverage",
+    "test:python:coverage": "cd services/scraper && pytest --cov=src --cov-report=xml:coverage.xml",
+    "build": "pnpm -r build",
+    "format": "prettier --write . && ruff format services/scraper",
+    "sonar": "sonar-scanner -Dsonar.token=${SONAR_TOKEN}",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix"
+    ],
+    "*.py": [
+      "ruff check --fix",
+      "ruff format"
+    ],
+    "*": [
+      "prettier --write --ignore-unknown"
+    ]
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=25.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^4.0.18",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^17.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.8.1",
+    "pyright": "^1.1.408",
+    "sonarqube-scanner": "^4.3.4",
+    "supertest": "^7.2.2",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.53.1",
+    "vitest": "^4.0.18",
+    "vitest-mock-extended": "^3.1.0"
   }
 }

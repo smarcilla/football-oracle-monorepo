@@ -6,12 +6,16 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "test": "vitest run --exclude **/*.integration.test.ts",
+    "test:integration": "vitest run **/*.integration.test.ts",
+    "test:coverage": "vitest run --coverage",
     "build": "tsc"
   },
   "dependencies": {
     "kafkajs": "^2.2.4"
   },
   "devDependencies": {
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vitest": "^4.0.18"
   }
 }

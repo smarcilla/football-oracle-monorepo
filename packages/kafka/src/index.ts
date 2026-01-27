@@ -1,4 +1,4 @@
-import { Kafka, Producer } from "kafkajs";
+import { Kafka, Producer } from 'kafkajs';
 
 export interface KafkaConfig {
   clientId: string;
@@ -8,7 +8,7 @@ export interface KafkaConfig {
 
 let kafka: Kafka | null = null;
 let producer: Producer | null = null;
-let currentGroupId: string = "";
+let currentGroupId: string = '';
 
 export async function initKafka(config: KafkaConfig): Promise<void> {
   if (kafka) return;
@@ -24,9 +24,31 @@ export async function initKafka(config: KafkaConfig): Promise<void> {
   console.log(`[Kafka] Connected as ${config.clientId}`);
 }
 
+export async function ensureTopics(topics: string[]): Promise<void> {
+  if (!kafka) {
+    throw new Error('Kafka not initialized. Call initKafka(config) first.');
+  }
+
+  const admin = kafka.admin();
+  await admin.connect();
+  const existingTopics = await admin.listTopics();
+
+  const topicsToCreate = topics.filter((topic) => !existingTopics.includes(topic));
+  if (topicsToCreate.length > 0) {
+    await admin.createTopics({
+      topics: topicsToCreate.map((topic) => ({ topic })),
+    });
+    console.log(`[Kafka] Created topics: ${topicsToCreate.join(', ')}`);
+  } else {
+    console.log('[Kafka] All topics already exist.');
+  }
+
+  await admin.disconnect();
+}
+
 export async function publish(topic: string, message: object): Promise<void> {
   if (!producer) {
-    throw new Error("Kafka not initialized. Call initKafka(config) first.");
+    throw new Error('Kafka not initialized. Call initKafka(config) first.');
   }
 
   await producer.send({
@@ -42,7 +64,7 @@ export async function subscribe(
   handler: (message: object) => Promise<void>,
 ): Promise<void> {
   if (!kafka) {
-    throw new Error("Kafka not initialized. Call initKafka(config) first.");
+    throw new Error('Kafka not initialized. Call initKafka(config) first.');
   }
 
   const consumer = kafka.consumer({ groupId: currentGroupId });
@@ -52,7 +74,7 @@ export async function subscribe(
   await consumer.run({
     eachMessage: async ({ message }) => {
       if (message.value) {
-        const content = JSON.parse(message.value.toString());
+        const content = JSON.parse(message.value.toString()) as object;
         console.log(`[Kafka] Received from ${topic}:`, content);
         await handler(content);
       }

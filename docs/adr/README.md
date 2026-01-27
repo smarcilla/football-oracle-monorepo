@@ -14,6 +14,8 @@ Este directorio contiene los ADRs (Architecture Decision Records) del proyecto F
 | [0005](0005-ci-cd-git-hooks.md)                    | CI/CD y validacion local con Git Hooks    | Aceptado | 2026-01-22 |
 | [0006](0006-database-initialization-migrations.md) | Gestión de Iniciación y Migraciones de BD | Aceptado | 2026-01-22 |
 | [0007](0007-migracion-kafka.md)                    | Migración a Apache Kafka                  | Aceptado | 2026-01-23 |
+| [0008](0008-uso-sonarqube-sonarcloud.md)           | Uso de SonarCloud para calidad            | Aceptado | 2026-01-26 |
+| [0009](0009-migracion-express-5.md)                | Migración a Express 5                     | Aceptado | 2026-01-26 |
 
 ## Como crear un nuevo ADR
 

@@ -1,4 +1,4 @@
-import { publish } from "@football-oracle/kafka";
+import { publish } from '@football-oracle/kafka';
 
 interface SimulationData {
   matchId: string;
@@ -17,9 +17,7 @@ interface SimulationData {
   };
 }
 
-export async function handleSimulationCompleted(
-  message: object,
-): Promise<void> {
+export async function handleSimulationCompleted(message: object): Promise<void> {
   const data = message as SimulationData;
 
   console.log(`[Journalist] Processing match: ${data.matchId}`);
@@ -47,5 +45,5 @@ export async function handleSimulationCompleted(
 
   console.log(`[Journalist] Report generated:`, mockReport.title);
 
-  await publish("match.report_ready", mockReport);
+  await publish('match.report_ready', mockReport);
 }

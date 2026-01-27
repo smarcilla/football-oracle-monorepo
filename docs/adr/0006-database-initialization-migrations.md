@@ -82,6 +82,7 @@ Además, aunque la BD exista, el schema (tablas definidas en ARCHITECTURE.md sec
 ### Desarrollo Local
 
 1. **docker-compose init container** o script de healthcheck:
+
    ```yaml
    services:
      db-init:
@@ -89,7 +90,7 @@ Además, aunque la BD exista, el schema (tablas definidas en ARCHITECTURE.md sec
        depends_on:
          postgres:
            condition: service_healthy
-       command: ["psql", "-h", "postgres", "-U", "user", "-f", "/init.sql"]
+       command: ['psql', '-h', 'postgres', '-U', 'user', '-f', '/init.sql']
        volumes:
          - ./packages/database/init.sql:/init.sql
    ```
@@ -107,15 +108,18 @@ Además, aunque la BD exista, el schema (tablas definidas en ARCHITECTURE.md sec
 ## Consecuencias
 
 ### Positivas (al resolver)
+
 - Entorno de desarrollo reproducible con un solo comando
 - Schema versionado y auditable
 - Rollback posible ante errores
 
 ### Negativas (deuda actual)
+
 - Walking Skeleton funciona sin BD real (mocks)
 - Cualquier servicio que intente usar PostgreSQL fallará
 
 ### Riesgos
+
 - Si elegimos mal la herramienta, migrar después es costoso
 - Migraciones automáticas en producción pueden causar downtime
 
