@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model League {
+  id      String   @id
+  name    String
+  country String
+  seasons Season[]
+}
+
+model Season {
+  id       Int     @id @default(autoincrement())
+  name     String
+  league   League  @relation(fields: [leagueId], references: [id])
+  leagueId String
+  matches  Match[]
+
+  @@unique([leagueId, name])
+}
+
+
+model Match {
+  id           Int          @id
+  date         DateTime
+  status       MatchStatus  @default(IDENTIFIED)
+  homeTeamId   Int
+  awayTeamId   Int
+  seasonId     Int
+  realScore    Json?
+  rawShots     Json?
+  scrapedAt    DateTime?
+  simulation   Simulation?
+  report       Report?
+  season       Season       @relation(fields: [seasonId], references: [id])
+}
+
+model Simulation {
+  id        Int      @id @default(autoincrement())
+  matchId   Int      @unique
+  match     Match    @relation(fields: [matchId], references: [id])
+  results   Json
+  createdAt DateTime @default(now())
+}
+
+model Report {
+  id        Int      @id @default(autoincrement())
+  matchId   Int      @unique
+  match     Match    @relation(fields: [matchId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Outbox {
+  id          String       @id @default(uuid())
+  topic       String
+  payload     Json
+  status      OutboxStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  processedAt DateTime?
+}
+
+enum MatchStatus {
+  IDENTIFIED
+  SCRAPING
+  SCRAPED
+  SIMULATING
+  SIMULATED
+  REPORTING
+  COMPLETED
+  FAILED
+}
+
+enum OutboxStatus {
+  PENDING
+  PROCESSED
+  FAILED
+}

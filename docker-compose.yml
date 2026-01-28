@@ -60,6 +60,7 @@ services:
       - DATABASE_URL=postgresql://football:football@postgres:5432/football_oracle
       - REDIS_URL=redis://redis:6379
       - KAFKA_BROKERS=kafka:29092
+      - INTERNAL_API_KEY=dev-secret-key
     depends_on:
       postgres:
         condition: service_healthy
@@ -95,6 +96,7 @@ services:
       - NODE_ENV=development
       - KAFKA_BROKERS=kafka:29092
       - DATA_REGISTRY_URL=http://data-registry:3002
+      - INTERNAL_API_KEY=dev-secret-key
       - REDIS_URL=redis://redis:6379
     depends_on:
       data-registry:
