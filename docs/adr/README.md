@@ -17,6 +17,8 @@ Este directorio contiene los ADRs (Architecture Decision Records) del proyecto F
 | [0008](0008-uso-sonarqube-sonarcloud.md)           | Uso de SonarCloud para calidad            | Aceptado  | 2026-01-26 |
 | [0009](0009-migracion-express-5.md)                | Migración a Express 5                     | Aceptado  | 2026-01-26 |
 | [0010](0010-implementacion-scrapers-sofascore.md)  | Implementación de Scrapers con ScraperFC  | Propuesto | 2026-01-27 |
+| [0011](0011-arquitectura-servicio-persistencia.md) | Centralización de Persistencia (Data API) | Propuesto | 2026-01-28 |
+| [0012](0012-seleccion-orm-data-registry.md)        | Selección de ORM para el Data Registry    | Propuesto | 2026-01-28 |
 
 ## Como crear un nuevo ADR
 

@@ -23,15 +23,19 @@
 
 ## Trabajo en Progreso
 
-### Fase 4: Scrapers y Calidad
+### Fase 4: Scrapers y Persistencia
 
 - [x] Implementación de `SofascoreClient` y `MatchHandler`
 - [x] Dockerfile optimizado con Google Chrome y no-root user
 - [x] Configuración de latencia baja en Kafka (linger.ms, fetch.min.bytes)
 - [x] Seguridad: 0 issues en SonarCloud para el servicio Scraper
+- [x] Análisis y decisión tecnológica para persistencia ([ADR-0011](docs/adr/0011-arquitectura-servicio-persistencia.md))
+- [x] Definición detallada del modelo de datos y estrategia Redis ([ARCHITECTURE.md](ARCHITECTURE.md#5-modelo-de-datos-y-estrategia-de-persistencia))
+- [x] Documentación de máquina de estados y flujo de eventos ([system-flow-states.md](docs/system-flow-states.md))
+- [x] Diseño técnico del servicio `Data Registry` ([docs/services/data-registry.md](docs/services/data-registry.md))
+- [ ] Implementar `Data Registry Service` (Node.js + Prisma)
 - [ ] Implementar scraping masivo por liga y temporada
-- [ ] Persistencia de eventos scrapeados en base de datos (PostgreSQL) para evitar re-scraping
-- [ ] ADR para la estrategia de persistencia (Outbox pattern vs persistencia simple)
+- [ ] Integrar Scraper Python con el nuevo `Data Registry Service`
 
 ## Arquitectura Implementada
 
@@ -85,11 +89,12 @@ pnpm run down
 ## Notas para Proxima Sesion
 
 ```
-Tareas pendientes de Fase 4 (Scraper):
-1. Caso de Uso: Scrapear todos los partidos de una liga y temporada concreta (ej: LaLiga 2023/24).
-   - Necesitaremos un nuevo mensaje en Kafka o un endpoint en API para disparar esto.
-2. Persistencia en BD: Guardar los eventos procesados en PostgreSQL.
-   - Evitar scrappear partidos que ya están en la base de datos.
-   - Evaluar si usamos el patrón Outbox para garantizar que si se guarda en BD, se publique en Kafka y viceversa.
-3. Actualizar documentacion de Fase 4 y añadir ADR si es necesario para el esquema de BD del scraper.
+Tareas pendientes de Fase 4 (Persistencia y Scraper):
+1. Iniciar el nuevo servicio 'data-registry' en la carpeta services/.
+   - Configurar Prisma con el modelo definido en ARCHITECTURE.md.
+   - Implementar el patrón Outbox para que al guardar datos se emitan eventos a Kafka.
+2. Adaptar el Scraper Python para usar la API del Data Registry.
+   - Comprobar estado de partido antes de scrapear.
+   - Enviar resultados via POST/PATCH al Data Registry.
+3. Implementar el comando de sync masivo de liga/temporada usando estos nuevos componentes.
 ```
