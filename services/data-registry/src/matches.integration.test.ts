@@ -2,23 +2,39 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import { app } from './index.js';
 
-// Mock the repository
-vi.mock('./repositories/match.repository.js', () => {
-  return {
-    MatchRepository: class {
-      findAll = vi
-        .fn()
-        .mockResolvedValue([{ id: 1, team: 'Team A vs Team B', status: 'COMPLETED' }]);
-      findById = vi.fn().mockImplementation((id: number) => {
-        if (id === 1) {
-          return Promise.resolve({ id: 1, team: 'Team A vs Team B', status: 'COMPLETED' });
-        }
-        return Promise.resolve(null);
-      });
-      bulkCreate = vi.fn().mockResolvedValue([{ id: 101 }, { id: 102 }]);
-    },
-  };
-});
+// Mock the repositories
+vi.mock('./repositories/match.repository.js', () => ({
+  MatchRepository: class {
+    findAll = vi.fn().mockResolvedValue([{ id: 1, team: 'Team A vs Team B', status: 'COMPLETED' }]);
+    findById = vi.fn().mockImplementation((id: number) => {
+      if (id === 1) {
+        return Promise.resolve({ id: 1, team: 'Team A vs Team B', status: 'IDENTIFIED' });
+      }
+      if (id === 101) {
+        return Promise.resolve({ id: 101, team: 'Team A vs Team B', status: 'SCRAPED' });
+      }
+      if (id === 102) {
+        return Promise.resolve({ id: 102, team: 'Team A vs Team B', status: 'SIMULATED' });
+      }
+      return Promise.resolve(null);
+    });
+    bulkCreate = vi.fn().mockResolvedValue([{ id: 101 }, { id: 102 }]);
+    updateStatus = vi.fn().mockResolvedValue({ id: 1, status: 'SCRAPING' });
+    updateData = vi.fn().mockResolvedValue({ id: 1, status: 'SCRAPED' });
+  },
+}));
+
+vi.mock('./repositories/simulation.repository.js', () => ({
+  SimulationRepository: class {
+    create = vi.fn().mockResolvedValue({ id: 1, matchId: 101 });
+  },
+}));
+
+vi.mock('./repositories/report.repository.js', () => ({
+  ReportRepository: class {
+    create = vi.fn().mockResolvedValue({ id: 1, matchId: 102 });
+  },
+}));
 
 describe('Data Registry - Matches Endpoint', () => {
   beforeEach(() => {
@@ -101,5 +117,54 @@ describe('Data Registry - Matches Endpoint', () => {
       });
 
     expect(response.status).toBe(400);
+  });
+
+  describe('Lifecycle Endpoints', () => {
+    it('PATCH /matches/:id/status should update status', async () => {
+      const response = await request(app)
+        .patch('/matches/1/status')
+        .set('x-api-key', 'test-secret-key')
+        .send({ status: 'SCRAPING' });
+
+      expect(response.status).toBe(200);
+      expect((response.body as { data: { status: string } }).data.status).toBe('SCRAPING');
+    });
+
+    it('PATCH /matches/:id/data should update shots data', async () => {
+      const response = await request(app)
+        .patch('/matches/1/data')
+        .set('x-api-key', 'test-secret-key')
+        .send({ rawShots: [{ x: 1, y: 2 }] });
+
+      expect(response.status).toBe(200);
+      expect((response.body as { data: { status: string } }).data.status).toBe('SCRAPED');
+    });
+
+    it('POST /simulations should create a simulation result', async () => {
+      const response = await request(app)
+        .post('/simulations')
+        .set('x-api-key', 'test-secret-key')
+        .send({
+          matchId: 101,
+          results: { homeWinProb: 0.5, drawProb: 0.3, awayWinProb: 0.2, iterations: 1000 },
+        });
+
+      expect(response.status).toBe(201);
+      expect((response.body as { data: { matchId: number } }).data.matchId).toBe(101);
+    });
+
+    it('POST /reports should create an AI report', async () => {
+      const response = await request(app)
+        .post('/reports')
+        .set('x-api-key', 'test-secret-key')
+        .send({
+          matchId: 102,
+          content: 'Long enough content for validation',
+          provider: 'openai',
+        });
+
+      expect(response.status).toBe(201);
+      expect((response.body as { data: { matchId: number } }).data.matchId).toBe(102);
+    });
   });
 });

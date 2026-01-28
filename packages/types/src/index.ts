@@ -15,6 +15,21 @@ export interface LeagueSynced {
   matchesCount: number;
 }
 
+export interface MatchDataScraped {
+  matchId: number;
+  shotsCount: number;
+}
+
+export interface MatchSimulationCompleted {
+  matchId: number;
+  winnerProb: 'home' | 'draw' | 'away'; // Simplified for the event signal
+}
+
+export interface MatchReportGenerated {
+  matchId: number;
+  reportId: number;
+}
+
 export interface MatchAnalysisRequested {
   matchId: string;
   timestamp: string;
@@ -55,7 +70,7 @@ export interface ShotEvent {
 }
 
 export interface MatchSimulationCompleted {
-  matchId: string;
+  matchId: number;
   homeTeam: string;
   awayTeam: string;
   iterations: number;
@@ -74,7 +89,7 @@ export interface SimulationResults {
 }
 
 export interface MatchReportReady {
-  matchId: string;
+  matchId: number;
   title: string;
   content: string;
   generatedAt: string;

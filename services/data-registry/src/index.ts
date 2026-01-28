@@ -1,6 +1,14 @@
 import express, { Express } from 'express';
 import { apiKeyMiddleware } from './middleware/auth.js';
-import { getMatches, getMatchById, bulkCreateMatches } from './handlers/match.handler.js';
+import {
+  getMatches,
+  getMatchById,
+  bulkCreateMatches,
+  updateMatchStatus,
+  updateMatchData,
+  createSimulation,
+  createReport,
+} from './handlers/match.handler.js';
 
 const app: Express = express();
 app.disable('x-powered-by');
@@ -19,6 +27,10 @@ app.use(apiKeyMiddleware);
 app.get('/matches', getMatches);
 app.get('/matches/:id', getMatchById);
 app.post('/matches/bulk', bulkCreateMatches);
+app.patch('/matches/:id/status', updateMatchStatus);
+app.patch('/matches/:id/data', updateMatchData);
+app.post('/simulations', createSimulation);
+app.post('/reports', createReport);
 
 // Global Error Handler
 app.use(

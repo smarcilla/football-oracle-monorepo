@@ -1,5 +1,5 @@
 import { prisma } from '../config/db.js';
-import { Match, MatchStatus, OutboxStatus } from '@prisma/client';
+import { Prisma, Match, MatchStatus, OutboxStatus } from '@prisma/client';
 import { BusinessTopic } from '@football-oracle/types';
 
 export interface MatchFilters {
@@ -52,6 +52,47 @@ export class MatchRepository {
         simulation: true,
         report: true,
       },
+    });
+  }
+
+  async updateStatus(id: number, status: MatchStatus) {
+    return prisma.$transaction(async (tx) => {
+      const match = await tx.match.update({
+        where: { id },
+        data: { status },
+      });
+
+      // No specific business event for just status change usually,
+      // but maybe we want one if it's a specific transition.
+      // For now, let's keep it simple.
+
+      return match;
+    });
+  }
+
+  async updateData(id: number, rawShots: unknown) {
+    return prisma.$transaction(async (tx) => {
+      const match = await tx.match.update({
+        where: { id },
+        data: {
+          rawShots: rawShots as Prisma.InputJsonValue,
+          status: MatchStatus.SCRAPED,
+          scrapedAt: new Date(),
+        },
+      });
+
+      await tx.outbox.create({
+        data: {
+          topic: BusinessTopic.MATCH_DATA_SCRAPED,
+          payload: {
+            matchId: match.id,
+            shotsCount: Array.isArray(rawShots) ? rawShots.length : 0,
+          },
+          status: OutboxStatus.PENDING,
+        },
+      });
+
+      return match;
     });
   }
 
