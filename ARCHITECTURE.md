@@ -30,16 +30,16 @@ El sistema sigue un patrón de **Microservicios Asíncronos** orquestados por ev
 
 ### Componentes Principales
 
-| Componente            | Tecnología             | Responsabilidad Principal                                              |
-| :-------------------- | :--------------------- | :--------------------------------------------------------------------- |
-| **Frontend App**      | Next.js (React)        | Interfaz de usuario: Dashboard, listados y visualización de reportes.  |
-| **API Orchestrator**  | Node.js (TS) / Express | Gateway, gestión de usuarios y control de flujo de peticiones.         |
-| **Scraper Worker**    | Python                 | Extracción de datos (ScraperFC/Sofascore). Único componente en Python. |
-| **Simulation Engine** | Node.js (TS)           | Motor matemático. Ejecución de algoritmos Monte Carlo.                 |
-| **Journalist Agent**  | Node.js (TS) + Genkit  | Generación de narrativas (NLG) usando LLMs (Gemini/OpenAI).            |
-| **Message Broker**    | Apache Kafka (KRaft)   | Bus de eventos para comunicación asíncrona.                            |
-| **Persistencia**      | PostgreSQL             | Base de datos relacional principal.                                    |
-| **Caché/Estado**      | Redis                  | Caché de respuestas y estado de trabajos en tiempo real.               |
+| Componente            | Tecnología             | Responsabilidad Principal                                                     |
+| :-------------------- | :--------------------- | :---------------------------------------------------------------------------- |
+| **Frontend App**      | Next.js (React)        | Interfaz de usuario: Dashboard, listados y visualización de reportes.         |
+| **API Orchestrator**  | Node.js (TS) / Express | Gateway/BFF. Orquestación de peticiones y autenticación.                      |
+| **Data Registry**     | Node.js (TS) / Prisma  | **Nuevo:** Servicio central de persistencia y caché (Single Source of Truth). |
+| **Scraper Worker**    | Python                 | Extracción de datos (ScraperFC/Sofascore). Único componente en Python.        |
+| **Simulation Engine** | Node.js (TS)           | Motor matemático. Ejecución de algoritmos Monte Carlo.                        |
+| **Journalist Agent**  | Node.js (TS) + Genkit  | Generación de narrativas (NLG) usando LLMs (Gemini/OpenAI).                   |
+| **Message Broker**    | Apache Kafka (KRaft)   | Bus de eventos para comunicación asíncrona.                                   |
+| **Persistencia**      | PostgreSQL + Redis     | Almacenamiento relacional y caché de alto rendimiento.                        |
 
 ---
 
@@ -59,18 +59,26 @@ El sistema sigue un patrón de **Microservicios Asíncronos** orquestados por ev
 - **Stack:** Node.js, TypeScript.
 - **Funciones:**
   - Endpoints REST para el Frontend.
-  - Productor de eventos iniciales (`cmd.sync_calendar`, `cmd.analyze_match`).
-  - Lectura/Escritura en PostgreSQL.
-  - Verificación de caché en Redis antes de iniciar procesos pesados.
+  - Productor de eventos iniciales (`match.analysis.requested`).
+  - Actúa como BFF (Backend for Frontend), agregando datos del Data Registry.
+  - Gestión de sesiones y seguridad.
 
-### C. Scraper Worker (Python Service)
+### C. Data Registry (Persistence)
+
+- **Stack:** Node.js, TypeScript, Prisma/Drizzle.
+- **Funciones:**
+  - Single Source of Truth para todas las entidades (Matches, Leagues, Sims, Reports).
+  - Implementación del **Transactional Outbox Pattern** para Kafka.
+  - Abstracción de PostgreSQL y Redis.
+  - API interna para el Scraper de Python.
+- **Diseño Detallado:** Ver [docs/services/data-registry.md](docs/services/data-registry.md).
 
 - **Stack:** Python 3.10+, ScraperFC, confluent-kafka.
 - **Modos de Operación:**
   1.  **Modo Calendario (Light):** Descarga lista de partidos (IDs, fechas, equipos) sin entrar al detalle.
   2.  **Modo Partido (Heavy):** Entra en un ID específico y extrae el _Shotmap_ (mapa de tiros) y xG.
 
-### D. Simulation Engine (Node Service)
+### E. Simulation Engine (Node Service)
 
 - **Stack:** Node.js, TypeScript.
 - **Lógica:**
@@ -78,7 +86,7 @@ El sistema sigue un patrón de **Microservicios Asíncronos** orquestados por ev
   - Ejecuta bucle de 100.000 iteraciones.
   - Calcula: Probabilidades de victoria (Local/Empate/Visitante), Resultado más probable (Moda), Goleadores probables.
 
-### E. Journalist Agent (Genkit Service)
+### F. Journalist Agent (Genkit Service)
 
 - **Stack:** Node.js, Google Genkit, Zod (validación).
 - **Lógica:**
@@ -107,13 +115,18 @@ El sistema se mueve mediante mensajes en Kafka.
 
 ---
 
-## 5. Modelo de Datos (PostgreSQL)
+## 5. Modelo de Datos y Estrategia de Persistencia
 
-Diseño relacional para soportar el catálogo y los análisis.
+El sistema utiliza un modelo relacional en **PostgreSQL** como fuente de verdad y **Redis** como capa de aceleración y control de concurrencia.
+
+### A. Modelo Relacional (PostgreSQL)
+
+El modelo está diseñado para soportar no solo el análisis individual, sino también proyecciones estadísticas a largo plazo (como simulación de ligas completas o comparación de xPoints).
 
 ```mermaid
 erDiagram
-    LEAGUES ||--|{ MATCHES : contains
+    LEAGUES ||--|{ SEASONS : has
+    SEASONS ||--|{ MATCHES : contains
     TEAMS ||--|{ MATCHES : plays_home
     TEAMS ||--|{ MATCHES : plays_away
     MATCHES ||--|| SIMULATIONS : generates
@@ -122,7 +135,13 @@ erDiagram
     LEAGUES {
         string id PK
         string name
-        string season
+        string country
+    }
+
+    SEASONS {
+        int id PK
+        string league_id FK
+        string name
     }
 
     TEAMS {
@@ -133,11 +152,14 @@ erDiagram
 
     MATCHES {
         int id PK
+        int season_id FK
         int home_team_id FK
         int away_team_id FK
         datetime date
         string status
         json real_score
+        json raw_shots
+        datetime scraped_at
     }
 
     SIMULATIONS {
@@ -147,22 +169,43 @@ erDiagram
         float draw_prob
         float away_win_prob
         string most_likely_score
+        json expected_goals
+        json player_stats
         json raw_stats
+        datetime computed_at
     }
 
     REPORTS {
         int match_id PK
+        string title
         text content
-        datetime created_at
+        datetime generated_at
     }
 ```
 
-> **Notas del modelo:**
+> **Notas sobre Simulaciones:**
 >
-> - `MATCHES.id`: ID de Sofascore
-> - `MATCHES.status`: Valores posibles: `PENDING`, `FINISHED`, `ANALYZED`
-> - `MATCHES.real_score`: JSON con formato `{home: 2, away: 1}`
-> - `SIMULATIONS.match_id` y `REPORTS.match_id`: FK hacia MATCHES
+> - `player_stats`: Almacena un mapa de `playerId -> { expectedGoals, simsWithGoalCount }` para alimentar crónicas detalladas.
+> - `raw_stats`: Contiene la distribución de frecuencia de todos los resultados (ej: `{ "2-1": 15000, "1-1": 12000, ... }`) para generar mapas de calor en el frontend.
+> - Los porcentajes de victoria (`home_win_prob`, etc.) permiten calcular los "Puntos Esperados" (xP) y compararlos con la realidad de la tabla clasificatoria.
+
+### B. Estrategia de Caché y Concurrencia (Redis)
+
+Redis se utiliza para optimizar el rendimiento y evitar trabajos duplicados ("Thundering Herd").
+
+| Tipo de Datos        | Estructura                      | TTL   | Razón                                                                           |
+| :------------------- | :------------------------------ | :---- | :------------------------------------------------------------------------------ |
+| **Locks de Proceso** | `lock:match:scrapp:{id}`        | 5 min | Evita que dos instancias del Scraper procesen el mismo partido simultáneamente. |
+| **Match Summary**    | `cache:match:view:{id}`         | 24h   | Agregación de Metadatos + Simulación + Reporte para el Frontend.                |
+| **Catalog Cache**    | `cache:league:{id}:season:{id}` | 1h    | Listado de partidos de una temporada para navegación rápida.                    |
+
+### C. Almacenamiento de Eventos (Transactional Outbox)
+
+Para garantizar que cada cambio de estado en la base de datos se notifique a Kafka, el **Data Registry** implementa una tabla de `OUTBOX`:
+
+1. El servicio realiza el cambio en `MATCHES` y escribe el evento en la tabla `OUTBOX` dentro de la misma transacción.
+2. Un proceso secundario (o un trigger de Prisma/CDC) lee de `OUTBOX` y publica en Kafka.
+3. Esto garantiza **consistencia eventual** incluso si Kafka está temporalmente caído.
 
 ## 6. Infraestructura y Despliegue
 
@@ -193,6 +236,7 @@ Estructura de carpetas optimizada para VS Code Workspaces:
 │   ├── web/                 # Frontend (Next.js)
 │   └── api/                 # API Gateway (Express)
 ├── services/
+│   ├── data-registry/       # Persistence Service (Node.js)
 │   ├── scraper/             # Python Worker
 │   ├── engine/              # Node Simulation Engine
 │   └── journalist/          # Genkit NLG Service
@@ -301,20 +345,11 @@ Estructura de carpetas optimizada para VS Code Workspaces:
 
 ## 11. Gestión de Base de Datos
 
-<!-- TODO_COUNT: 2 -->
+<!-- TODO_COUNT: 1 -->
 
-> **TODO:** Definir estrategia de inicialización de BD.
->
-> - Actualmente `POSTGRES_DB=football` en docker-compose solo crea la BD en el contenedor
-> - Los servicios fallan si la BD no existe o el schema no está creado
-> - ¿Script de inicialización? ¿Init container? ¿Healthcheck con retry?
-> - Ver ADR-0006 para decisión sobre herramientas
+> **Decisión:** Se ha centralizado la gestión de la BD en un servicio Node.js denominado **Data Registry** ([ADR-0011](docs/adr/0011-arquitectura-servicio-persistencia.md)). Esto resuelve la duplicidad de lógica en lenguajes heterogéneos.
 
-> **TODO:** Definir estrategia de migraciones.
->
-> - ¿Prisma Migrate? ¿Drizzle Kit? ¿SQL puro con herramienta tipo golang-migrate?
-> - ¿Migraciones automáticas en startup vs CI/CD controlado?
-> - ¿Rollback strategy?
+> **TODO:** Implementar el schema centralizado usando Prisma/Drizzle en `services/data-registry` y sincronizarlo con el `docker-compose.yml`.
 
 ---
 

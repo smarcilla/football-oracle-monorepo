@@ -52,6 +52,27 @@ services:
       retries: 5
 
   # Applications
+  data-registry:
+    build:
+      context: .
+      dockerfile: services/data-registry/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://football:football@postgres:5432/football_oracle
+      - REDIS_URL=redis://redis:6379
+      - KAFKA_BROKERS=kafka:29092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3002/health']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   web:
     build:
       context: .
@@ -73,14 +94,12 @@ services:
     environment:
       - NODE_ENV=development
       - KAFKA_BROKERS=kafka:29092
-      - DATABASE_URL=postgresql://football:football@postgres:5432/football_oracle
+      - DATA_REGISTRY_URL=http://data-registry:3002
       - REDIS_URL=redis://redis:6379
     depends_on:
-      postgres:
+      data-registry:
         condition: service_healthy
       kafka:
-        condition: service_healthy
-      redis:
         condition: service_healthy
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:4000/health']
@@ -95,7 +114,10 @@ services:
       dockerfile: Dockerfile
     environment:
       - KAFKA_BROKERS=kafka:29092
+      - DATA_REGISTRY_URL=http://data-registry:3002
     depends_on:
+      data-registry:
+        condition: service_healthy
       kafka:
         condition: service_healthy
 
@@ -105,7 +127,10 @@ services:
       dockerfile: services/engine/Dockerfile
     environment:
       - KAFKA_BROKERS=kafka:29092
+      - DATA_REGISTRY_URL=http://data-registry:3002
     depends_on:
+      data-registry:
+        condition: service_healthy
       kafka:
         condition: service_healthy
 
@@ -115,7 +140,10 @@ services:
       dockerfile: services/journalist/Dockerfile
     environment:
       - KAFKA_BROKERS=kafka:29092
+      - DATA_REGISTRY_URL=http://data-registry:3002
     depends_on:
+      data-registry:
+        condition: service_healthy
       kafka:
         condition: service_healthy
 
