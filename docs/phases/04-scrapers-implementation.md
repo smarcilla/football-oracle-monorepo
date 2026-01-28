@@ -1,8 +1,8 @@
 # Fase 4: Implementación de Scrapers (Sofascore)
 
-**Estado:** No Iniciado  
+**Estado:** En progreso (Core funcional, pendientes tareas de persistencia y scraping masivo)  
 **Fecha:** 2026-01-27  
-**Branch:** `phase-4-scrapers-sofascocore`  
+**Branch:** `main`  
 **ADRs relacionados:**
 
 - [ADR-0010](../adr/0010-implementacion-scrapers-sofascore.md)
@@ -40,12 +40,14 @@ Se utilizará la clase `Sofascore` de la librería `ScraperFC` con los siguiente
 
 ## Plan de Tareas
 
-- [ ] Definición del ADR-0010 para la estrategia de scraping.
-- [ ] Actualización de dependencias del servicio `scraper`.
-- [ ] Implementación del cliente `SofascoreClient`.
-- [ ] Implementación de lógica de extracción por liga/año.
-- [ ] Pruebas unitarias con mocks para evitar llamadas reales a la API durante el CI.
-- [ ] Integración con el sistema de mensajería (Kafka) para enviar los datos extraídos.
+- [x] Definición del ADR-0010 para la estrategia de scraping.
+- [x] Actualización de dependencias del servicio `scraper`.
+- [x] Implementación del cliente `SofascoreClient`.
+- [ ] Implementación de lógica de extracción por liga/año (Scraping masivo).
+- [x] Pruebas unitarias con mocks para evitar llamadas reales a la API durante el CI.
+- [x] Integración con el sistema de mensajería (Kafka) para enviar los datos extraídos.
+- [x] Optimización de Dockerfile (Seguridad y no-root user).
+- [ ] Implementación de persistencia en BD (PostgreSQL) para evitar re-scraping redundante.
 
 ## Validación
 
