@@ -1,35 +1,37 @@
 # Project Status
 
 > Este fichero mantiene el estado actual del proyecto para continuidad entre sesiones.  
-> **Ultima actualizacion:** 2026-01-23
+> **Ultima actualizacion:** 2026-01-27
 
 ## Estado Actual
 
-**Fase:** CI/CD y Calidad (Phase 3)  
-**Branch activa:** `phase-3-ci-cd-quality`  
-**Proximo paso:** Implementar Scraper real (Fase 4)
+**Fase:** Implementación de Scrapers (Phase 4)  
+**Branch activa:** `main` (Mergeada la integración base de Sofascore)  
+**Proximo paso:** Implementar scraping por liga/temporada y persistencia de eventos.
 
 ## Roadmap
 
-| Fase                  | Descripcion                                               | Estado                    |
-| --------------------- | --------------------------------------------------------- | ------------------------- |
-| 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales                          | Completado                |
-| 2. Walking Skeleton   | Infraestructura + servicios mock (ADR-0002)               | Completado                |
-| 3. CI/CD y calidad    | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | En progreso (CI/CD listo) |
-| 4. Scraper real       | Integracion con Sofascore/ScraperFC                       | Pendiente                 |
-| 5. Simulation Engine  | Algoritmo Monte Carlo                                     | Pendiente                 |
-| 6. Journalist Agent   | Integracion Genkit + LLM                                  | Pendiente                 |
-| 7. Frontend completo  | UI con visualizaciones                                    | Pendiente                 |
+| Fase                  | Descripcion                                               | Estado      |
+| --------------------- | --------------------------------------------------------- | ----------- |
+| 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales                          | Completado  |
+| 2. Walking Skeleton   | Infraestructura + servicios mock (ADR-0002)               | Completado  |
+| 3. CI/CD y calidad    | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | Completado  |
+| 4. Scraper real       | Integracion con Sofascore/ScraperFC                       | En progreso |
+| 5. Simulation Engine  | Algoritmo Monte Carlo                                     | Pendiente   |
+| 6. Journalist Agent   | Integracion Genkit + LLM                                  | Pendiente   |
+| 7. Frontend completo  | UI con visualizaciones                                    | Pendiente   |
 
 ## Trabajo en Progreso
 
-### Branch: `phase-3-ci-cd-quality`
+### Fase 4: Scrapers y Calidad
 
-- [x] Pipeline de CI en GitHub Actions (.github/workflows/ci.yml)
-- [x] Restricción de Node.js 25 y Python 3.11
-- [x] Configuración de SonarCloud con cobertura combinada
-- [x] Plan de validación local (docs/tests/ci-validation-plan.md)
-- [ ] Ejecutar plan de validación y merge a main
+- [x] Implementación de `SofascoreClient` y `MatchHandler`
+- [x] Dockerfile optimizado con Google Chrome y no-root user
+- [x] Configuración de latencia baja en Kafka (linger.ms, fetch.min.bytes)
+- [x] Seguridad: 0 issues en SonarCloud para el servicio Scraper
+- [ ] Implementar scraping masivo por liga y temporada
+- [ ] Persistencia de eventos scrapeados en base de datos (PostgreSQL) para evitar re-scraping
+- [ ] ADR para la estrategia de persistencia (Outbox pattern vs persistencia simple)
 
 ## Arquitectura Implementada
 
@@ -83,17 +85,11 @@ pnpm run down
 ## Notas para Proxima Sesion
 
 ```
-Al iniciar nueva sesion:
-1. Leer este fichero (STATUS.md)
-2. Revisar ARCHITECTURE.md para contexto tecnico
-3. Revisar ADRs relevantes segun la fase actual
-4. Continuar desde "Proximo paso"
-
-Fase 3 incluye:
-- Husky para git hooks (pre-commit, commit-msg)
-- ESLint 9 flat config para TypeScript
-- Ruff para Python linting
-- Prettier para formateo
-- GitHub Actions para CI
-- Vitest para tests unitarios
+Tareas pendientes de Fase 4 (Scraper):
+1. Caso de Uso: Scrapear todos los partidos de una liga y temporada concreta (ej: LaLiga 2023/24).
+   - Necesitaremos un nuevo mensaje en Kafka o un endpoint en API para disparar esto.
+2. Persistencia en BD: Guardar los eventos procesados en PostgreSQL.
+   - Evitar scrappear partidos que ya están en la base de datos.
+   - Evaluar si usamos el patrón Outbox para garantizar que si se guarda en BD, se publique en Kafka y viceversa.
+3. Actualizar documentacion de Fase 4 y añadir ADR si es necesario para el esquema de BD del scraper.
 ```
