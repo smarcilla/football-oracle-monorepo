@@ -20,23 +20,18 @@ export interface MatchDataScraped {
   shotsCount: number;
 }
 
-export interface MatchSimulationCompleted {
-  matchId: number;
-  winnerProb: 'home' | 'draw' | 'away'; // Simplified for the event signal
-}
-
 export interface MatchReportGenerated {
   matchId: number;
   reportId: number;
 }
 
 export interface MatchAnalysisRequested {
-  matchId: string;
+  matchId: number;
   timestamp: string;
 }
 
 export interface MatchDataExtracted {
-  matchId: string;
+  matchId: number;
   metadata: {
     league: string;
     homeTeam: TeamMetadata;
