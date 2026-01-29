@@ -7,9 +7,9 @@ import { ReportRepository, CreateReportInput } from '../repositories/report.repo
 import { MatchStatus } from '@prisma/client';
 
 export class MatchService {
-  private repository: MatchRepository;
-  private simulationRepository: SimulationRepository;
-  private reportRepository: ReportRepository;
+  private readonly repository: MatchRepository;
+  private readonly simulationRepository: SimulationRepository;
+  private readonly reportRepository: ReportRepository;
 
   constructor() {
     this.repository = new MatchRepository();
