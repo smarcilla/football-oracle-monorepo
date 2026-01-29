@@ -1,12 +1,37 @@
-// Event types for RabbitMQ messages
+// Event types and topics for Kafka communication
+
+export enum BusinessTopic {
+  LEAGUE_SYNC_REQUESTED = 'league.sync.requested',
+  LEAGUE_SYNCED = 'league.synced',
+  MATCH_ANALYSIS_REQUESTED = 'match.analysis.requested',
+  MATCH_DATA_SCRAPED = 'match.data.scraped',
+  MATCH_SIMULATION_COMPLETED = 'match.simulation.completed',
+  MATCH_REPORT_GENERATED = 'match.report.generated',
+}
+
+export interface LeagueSynced {
+  league: string;
+  year: string;
+  matchesCount: number;
+}
+
+export interface MatchDataScraped {
+  matchId: number;
+  shotsCount: number;
+}
+
+export interface MatchReportGenerated {
+  matchId: number;
+  reportId: number;
+}
 
 export interface MatchAnalysisRequested {
-  matchId: string;
+  matchId: number;
   timestamp: string;
 }
 
 export interface MatchDataExtracted {
-  matchId: string;
+  matchId: number;
   metadata: {
     league: string;
     homeTeam: TeamMetadata;
@@ -40,7 +65,7 @@ export interface ShotEvent {
 }
 
 export interface MatchSimulationCompleted {
-  matchId: string;
+  matchId: number;
   homeTeam: string;
   awayTeam: string;
   iterations: number;
@@ -59,7 +84,7 @@ export interface SimulationResults {
 }
 
 export interface MatchReportReady {
-  matchId: string;
+  matchId: number;
   title: string;
   content: string;
   generatedAt: string;

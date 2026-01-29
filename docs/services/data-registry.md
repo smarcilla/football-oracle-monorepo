@@ -145,3 +145,24 @@ El servicio debe rechazar transiciones inválidas (ej: pasar de `IDENTIFIED` a `
 ### Patrón Outbox
 
 Cada vez que se guarda un `Match`, una `Simulation` o un `Report`, se crea una entrada en una tabla `Outbox`. Un worker interno lee estas entradas y las empuja al topic de Kafka correspondiente, marcándolas como procesadas.
+
+## 7. Estado de Implementación (Enero 2026)
+
+El servicio se encuentra en una fase funcional básica, con la infraestructura de persistencia principal establecida:
+
+- **Migración a Prisma 7**: Configuración finalizada con `prisma.config.js` y Driver Adapters operativos.
+- **Persistencia Base**: Implementación de Repositorios SQL (`Match`, `League`, `Season`, `Simulation`, `Report`) y definición de la tabla `Outbox`.
+- **Estructura por Capas**: Handlers y Services iniciales implementados con validación Zod.
+- **Dockerización**: Pipeline de construcción y despliegue con migraciones automáticas funcionando.
+
+### Pendientes Críticos en Data Registry:
+
+1.  **Outbox Relay Job**: Falta implementar el worker en `/src/jobs` que realice el polling de la tabla `Outbox`, publique en Kafka y actualice el estado a `PROCESSED`. Actualmente los eventos se guardan en la DB pero **no salen a Kafka**.
+2.  **Capa de Caché (Redis)**: Redis está configurado pero los Repositorios aún no implementan la lógica de _Cache-Aside_ ni de invalidación.
+3.  **Máquina de Estados**: La lógica de validación de transiciones en los Services está en fase de esqueleto y requiere ser completada.
+
+## 8. Siguientes Pasos
+
+- **Implementar Outbox Relay**: Crear el proceso de fondo para el envío de eventos.
+- **Integrar Redis en Repositorios**: Añadir soporte para caché de lectura en partidos y listas.
+- **Conexión con Scraper (Python)**: Una vez los eventos fluyan, conectar el scraper para alimentar el sistema.

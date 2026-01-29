@@ -1,13 +1,13 @@
 # Project Status
 
 > Este fichero mantiene el estado actual del proyecto para continuidad entre sesiones.  
-> **Ultima actualizacion:** 2026-01-27
+> **Ultima actualizacion:** 2026-01-29
 
 ## Estado Actual
 
-**Fase:** Implementación de Scrapers (Phase 4)  
-**Branch activa:** `main` (Mergeada la integración base de Sofascore)  
-**Proximo paso:** Implementar scraping por liga/temporada y persistencia de eventos.
+**Fase:** Integración Scraper & Data Registry (Phase 4)  
+**Branch activa:** `main` (Infraestructura de persistencia y Prisma 7 finalizada)  
+**Proximo paso:** Conectar el Scraper Python con el Data Registry para persistir partidos reales.
 
 ## Roadmap
 
@@ -16,7 +16,7 @@
 | 1. Documentacion base | ARCHITECTURE.md + ADRs iniciales                          | Completado  |
 | 2. Walking Skeleton   | Infraestructura + servicios mock (ADR-0002)               | Completado  |
 | 3. CI/CD y calidad    | Husky + GitHub Actions + lint/format (ADR-0004, ADR-0005) | Completado  |
-| 4. Scraper real       | Integracion con Sofascore/ScraperFC                       | En progreso |
+| 4. Scraper & Registry | Integracion Sofascore + Persistencia Prisma               | En progreso |
 | 5. Simulation Engine  | Algoritmo Monte Carlo                                     | Pendiente   |
 | 6. Journalist Agent   | Integracion Genkit + LLM                                  | Pendiente   |
 | 7. Frontend completo  | UI con visualizaciones                                    | Pendiente   |
@@ -25,17 +25,18 @@
 
 ### Fase 4: Scrapers y Persistencia
 
-- [x] Implementación de `SofascoreClient` y `MatchHandler`
+- [x] Implementación de `SofascoreClient` y `MatchHandler` (Python)
 - [x] Dockerfile optimizado con Google Chrome y no-root user
-- [x] Configuración de latencia baja en Kafka (linger.ms, fetch.min.bytes)
 - [x] Seguridad: 0 issues en SonarCloud para el servicio Scraper
 - [x] Análisis y decisión tecnológica para persistencia ([ADR-0011](docs/adr/0011-arquitectura-servicio-persistencia.md))
 - [x] Definición detallada del modelo de datos y estrategia Redis ([ARCHITECTURE.md](ARCHITECTURE.md#5-modelo-de-datos-y-estrategia-de-persistencia))
 - [x] Documentación de máquina de estados y flujo de eventos ([system-flow-states.md](docs/system-flow-states.md))
 - [x] Diseño técnico del servicio `Data Registry` ([docs/services/data-registry.md](docs/services/data-registry.md))
-- [ ] Implementar `Data Registry Service` (Node.js + Prisma)
-- [ ] Implementar scraping masivo por liga y temporada
-- [ ] Integrar Scraper Python con el nuevo `Data Registry Service`
+- [/] Implementar `Data Registry Service` (SQL Persistencia + Prisma 7 OK)
+- [ ] Implementar Outbox Relay Job (Kafka Bridge)
+- [ ] Implementar Capa de Caché en Repositorios (Redis)
+- [ ] Conectar Scraper Python con la API del Data Registry
+- [ ] Implementar scraping masivo por liga y temporada (Sync Job)
 
 ## Arquitectura Implementada
 
@@ -90,11 +91,11 @@ pnpm run down
 
 ```
 Tareas pendientes de Fase 4 (Persistencia y Scraper):
-1. Iniciar el nuevo servicio 'data-registry' en la carpeta services/.
-   - Configurar Prisma con el modelo definido en ARCHITECTURE.md.
-   - Implementar el patrón Outbox para que al guardar datos se emitan eventos a Kafka.
-2. Adaptar el Scraper Python para usar la API del Data Registry.
-   - Comprobar estado de partido antes de scrapear.
-   - Enviar resultados via POST/PATCH al Data Registry.
-3. Implementar el comando de sync masivo de liga/temporada usando estos nuevos componentes.
+1. Completar el Data Registry:
+   - Implementar el 'Outbox Relay Job' para que los eventos guardados en la DB salgan realmente hacia Kafka.
+   - Añadir la lógica de Redis (Cache-Aside) en los repositorios de Match.
+2. Iniciar la integración del Scraper Python:
+   - Implementar el cliente HTTP en Python para comunicarse con el Data Registry.
+   - Validar el flujo: Scraper -> Data Registry -> Outbox -> Kafka.
+3. Implementar el comando de 'sync' masivo por liga/temporada.
 ```
