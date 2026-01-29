@@ -1,6 +1,6 @@
 import { prisma } from '../config/db.js';
 import { BusinessTopic } from '@football-oracle/types';
-import { MatchStatus, OutboxStatus } from '@prisma/client';
+import { Prisma, MatchStatus, OutboxStatus } from '@prisma/client';
 
 export interface CreateReportInput {
   matchId: number;
@@ -9,7 +9,7 @@ export interface CreateReportInput {
 
 export class ReportRepository {
   async create(input: CreateReportInput) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const report = await tx.report.upsert({
         where: { matchId: input.matchId },
         update: { content: input.content },

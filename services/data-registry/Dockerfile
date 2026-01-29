@@ -27,23 +27,27 @@ COPY services/data-registry/ services/data-registry/
 
 # Build (including types dependency)
 RUN pnpm --filter @football-oracle/types build
-RUN pnpm --filter @football-oracle/data-registry prisma:generate
+RUN DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy pnpm --filter @football-oracle/data-registry prisma:generate
 RUN pnpm --filter @football-oracle/data-registry build
 
 FROM node:25-alpine AS runner
 
 WORKDIR /app
 
-# Install curl for healthchecks
-RUN apk add --no-cache curl
+# Install dependencies for Prisma and healthcheck
+RUN apk add --no-cache curl libgcc libstdc++ openssl
 
 # Copy from builder
 COPY --from=builder /app ./
+
+# Ensure entrypoint is executable
+RUN chmod +x services/data-registry/entrypoint.sh
 
 # Set non-privileged user
 USER node
 
 EXPOSE 3002
 
+ENTRYPOINT ["/app/services/data-registry/entrypoint.sh"]
 CMD ["node", "services/data-registry/dist/index.js"]
 

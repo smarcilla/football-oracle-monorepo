@@ -16,7 +16,7 @@ export interface CreateSimulationInput {
 
 export class SimulationRepository {
   async create(input: CreateSimulationInput) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const simulation = await tx.simulation.upsert({
         where: { matchId: input.matchId },
         update: { results: input.results as unknown as Prisma.InputJsonValue },

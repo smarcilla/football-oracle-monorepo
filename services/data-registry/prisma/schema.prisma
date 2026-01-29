@@ -4,14 +4,14 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model League {
-  id      String   @id
-  name    String
-  country String
-  seasons Season[]
+  id          String   @id
+  name        String
+  country     String
+  description String?
+  seasons     Season[]
 }
 
 model Season {

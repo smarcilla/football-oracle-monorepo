@@ -56,7 +56,7 @@ export class MatchRepository {
   }
 
   async updateStatus(id: number, status: MatchStatus) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const match = await tx.match.update({
         where: { id },
         data: { status },
@@ -71,7 +71,7 @@ export class MatchRepository {
   }
 
   async updateData(id: number, rawShots: unknown) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const match = await tx.match.update({
         where: { id },
         data: {
@@ -97,7 +97,7 @@ export class MatchRepository {
   }
 
   async bulkCreate(leagueId: string, seasonName: string, matches: BulkMatchInput[]) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Get or create season
       let season = await tx.season.findFirst({
         where: { leagueId, name: seasonName },
