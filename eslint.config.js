@@ -33,6 +33,7 @@ export default tseslint.config(
           './apps/api/tsconfig.json',
           './apps/web/tsconfig.json',
           './services/engine/tsconfig.json',
+          './services/data-registry/tsconfig.json',
           './services/journalist/tsconfig.json',
           './services/data-registry/tsconfig.json',
           './packages/*/tsconfig.json',
