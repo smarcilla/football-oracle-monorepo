@@ -103,11 +103,11 @@ export class MatchRepository {
         where: { leagueId, name: seasonName },
       });
 
-      if (!season) {
-        season = await tx.season.create({
-          data: { leagueId, name: seasonName },
-        });
-      }
+      // refactor to use nullish coalescing operator
+
+      season ??= await tx.season.create({
+        data: { leagueId, name: seasonName },
+      });
 
       const results = [];
       for (const m of matches) {

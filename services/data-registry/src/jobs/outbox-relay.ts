@@ -8,15 +8,13 @@ export interface OutboxRelayConfig {
 }
 
 export class OutboxRelay {
-  private repository: OutboxRepository;
-  private config: OutboxRelayConfig;
   private timer: NodeJS.Timeout | null = null;
   private isProcessing: boolean = false;
 
-  constructor(repository: OutboxRepository, config: OutboxRelayConfig) {
-    this.repository = repository;
-    this.config = config;
-  }
+  constructor(
+    readonly repository: OutboxRepository,
+    readonly config: OutboxRelayConfig,
+  ) {}
 
   /**
    * Start the relay job
