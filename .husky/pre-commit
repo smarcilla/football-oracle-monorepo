@@ -1,6 +1,13 @@
 
 echo "Running pre-commit checks..."
 
+# pre-requisitos
+echo "Building internal packages..."
+pnpm --filter "./packages/**" build || exit 1
+
+echo "Generating Prisma Client..."
+pnpm --filter "@football-oracle/data-registry" prisma:generate || exit 1
+
 # Lint
 echo "Checking lint..."
 pnpm lint || exit 1

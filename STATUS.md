@@ -5,9 +5,9 @@
 
 ## Estado Actual
 
-**Fase:** Integración Scraper & Data Registry (Phase 4)  
-**Branch activa:** `main` (Infraestructura de persistencia y Prisma 7 finalizada)  
-**Proximo paso:** Conectar el Scraper Python con el Data Registry para persistir partidos reales.
+**Fase:** Integración Outbox Relay & Testing (Phase 4)  
+**Branch activa:** `feat/data-registry-outbox-relay`  
+**Proximo paso:** Desplegar cambios en Docker y validar flujo de eventos Kafka.
 
 ## Roadmap
 
@@ -28,12 +28,15 @@
 - [x] Implementación de `SofascoreClient` y `MatchHandler` (Python)
 - [x] Dockerfile optimizado con Google Chrome y no-root user
 - [x] Seguridad: 0 issues en SonarCloud para el servicio Scraper
-- [x] Análisis y decisión tecnológica para persistencia ([ADR-0011](docs/adr/0011-arquitectura-servicio-persistencia.md))
-- [x] Definición detallada del modelo de datos y estrategia Redis ([ARCHITECTURE.md](ARCHITECTURE.md#5-modelo-de-datos-y-estrategia-de-persistencia))
-- [x] Documentación de máquina de estados y flujo de eventos ([system-flow-states.md](docs/system-flow-states.md))
-- [x] Diseño técnico del servicio `Data Registry` ([docs/services/data-registry.md](docs/services/data-registry.md))
-- [/] Implementar `Data Registry Service` (SQL Persistencia + Prisma 7 OK)
-- [ ] Implementar Outbox Relay Job (Kafka Bridge)
+- [x] Diseño técnico y arquitectura del `Outbox Relay Job` ([V2](docs/services/002-data-registry.md))
+- [x] Implementación de `OutboxRelay` y `OutboxRepository` (Node.js)
+- [x] Refactorización de `MatchService` y `MatchHandler` para Inyección de Dependencias
+- [x] Cobertura de tests unitarios al 51% (objetivo >70%)
+- [ ] Ejecutar migración de DB (`retries` field en Outbox table)
+- [ ] Definir variables de entorno para Kafka y Relay Job
+- [ ] Iniciar `OutboxRelay` en `src/index.ts`
+- [ ] Validar funcionamiento del Job dentro del contenedor Docker
+- [ ] Implementar Outbox Relay Job (Kafka Bridge) - _En progreso_
 - [ ] Implementar Capa de Caché en Repositorios (Redis)
 - [ ] Conectar Scraper Python con la API del Data Registry
 - [ ] Implementar scraping masivo por liga y temporada (Sync Job)
@@ -90,12 +93,15 @@ pnpm run down
 ## Notas para Proxima Sesion
 
 ```
-Tareas pendientes de Fase 4 (Persistencia y Scraper):
-1. Completar el Data Registry:
-   - Implementar el 'Outbox Relay Job' para que los eventos guardados en la DB salgan realmente hacia Kafka.
-   - Añadir la lógica de Redis (Cache-Aside) en los repositorios de Match.
-2. Iniciar la integración del Scraper Python:
-   - Implementar el cliente HTTP en Python para comunicarse con el Data Registry.
-   - Validar el flujo: Scraper -> Data Registry -> Outbox -> Kafka.
-3. Implementar el comando de 'sync' masivo por liga/temporada.
+Tareas pendientes de Continuidad:
+1. Infraestructura y DB:
+   - Ejecutar 'prisma migrate dev' para añadir el campo 'retries'.
+   - Actualizar docker-compose.yml si es necesario para variables de entorno de Kafka.
+2. Integración de Código:
+   - Instanciar e iniciar el OutboxRelay en el punto de entrada del servicio (@/src/index.ts).
+3. Verificación:
+   - Hacer 'pnpm run dev:build' y observar logs de 'data-registry' para verificar el arranque del Relay.
+   - Insertar manualmente un registro PENDING en la tabla Outbox y verificar llegada a Kafka.
+4. Calidad:
+   - Completar tests unitarios de Handlers y Repositories para alcanzar el 70% de coverage.
 ```

@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "test": "vitest run --exclude **/*.integration.test.ts",
-    "test:integration": "vitest run **/*.integration.test.ts",
-    "test:coverage": "vitest run --coverage",
+    "test": "vitest run --exclude '**/*.integration.test.ts'",
+    "test:integration": "vitest run integration",
+    "test:coverage": "vitest run --coverage --exclude '**/*.integration.test.ts'",
     "build": "tsc",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
