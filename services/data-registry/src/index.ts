@@ -51,22 +51,29 @@ const PORT = process.env['PORT'] || 3002;
 if (process.env['NODE_ENV'] !== 'test') {
   // Initialize Kafka
   const kafkaBrokers = process.env['KAFKA_BROKERS'] || 'localhost:9092';
-  void initKafka({
-    clientId: process.env['KAFKA_CLIENT_ID'] || 'data-registry',
-    brokers: kafkaBrokers.split(','),
-    groupId: process.env['KAFKA_GROUP_ID'] || 'data-registry-group',
-  }).catch((err) => {
+
+  // refactor conde to use top-level await
+
+  try {
+    await initKafka({
+      clientId: process.env['KAFKA_CLIENT_ID'] || 'data-registry',
+      brokers: kafkaBrokers.split(','),
+      groupId: process.env['KAFKA_GROUP_ID'] || 'data-registry-group',
+    });
+  } catch (err) {
     console.error('[Data Registry] Failed to initialize Kafka:', err);
-  });
+  }
+
+  // Start the server
 
   app.listen(PORT, () => {
     console.log(`[Data Registry] Server running on port ${PORT}`);
 
     // Initialize and start Outbox Relay
     const relayConfig = {
-      intervalMs: parseInt(process.env['OUTBOX_RELAY_INTERVAL_MS'] || '1000', 10),
-      batchSize: parseInt(process.env['OUTBOX_RELAY_BATCH_SIZE'] || '20', 10),
-      maxRetries: parseInt(process.env['OUTBOX_RELAY_MAX_RETRIES'] || '5', 10),
+      intervalMs: Number.parseInt(process.env['OUTBOX_RELAY_INTERVAL_MS'] || '1000', 10),
+      batchSize: Number.parseInt(process.env['OUTBOX_RELAY_BATCH_SIZE'] || '20', 10),
+      maxRetries: Number.parseInt(process.env['OUTBOX_RELAY_MAX_RETRIES'] || '5', 10),
     };
 
     const outboxRepository = new OutboxRepository();

@@ -1,13 +1,13 @@
 # Project Status
 
 > Este fichero mantiene el estado actual del proyecto para continuidad entre sesiones.  
-> **Ultima actualizacion:** 2026-01-29
+> **Ultima actualizacion:** 2026-01-30
 
 ## Estado Actual
 
 **Fase:** Integración Outbox Relay & Testing (Phase 4)  
 **Branch activa:** `feat/data-registry-outbox-relay`  
-**Proximo paso:** Desplegar cambios en Docker y validar flujo de eventos Kafka.
+**Siguiente objetivo:** Integración Scraper Python con Data Registry (Iniciando diseño).
 
 ## Roadmap
 
@@ -35,8 +35,8 @@
 - [x] Configuración de variables de entorno para Kafka y Relay Job en Docker
 - [x] Inicio de `OutboxRelay` en `src/index.ts` con configuración dinámica
 - [x] Ejecutar migración de DB (`retries` field en Outbox table)
-- [ ] Validar funcionamiento del Job dentro del contenedor Docker
-- [ ] Implementar Outbox Relay Job (Kafka Bridge) - _En progreso_
+- [x] Validar funcionamiento del Job dentro del contenedor Docker
+- [x] Implementar Outbox Relay Job (Kafka Bridge)
 - [ ] Implementar Capa de Caché en Repositorios (Redis)
 - [ ] Conectar Scraper Python con la API del Data Registry
 - [ ] Implementar scraping masivo por liga y temporada (Sync Job)
@@ -94,14 +94,11 @@ pnpm run down
 
 ```
 Tareas pendientes de Continuidad:
-1. Infraestructura y DB:
-   - Ejecutar 'prisma migrate dev' para añadir el campo 'retries'.
-   - Actualizar docker-compose.yml si es necesario para variables de entorno de Kafka.
-2. Integración de Código:
-   - Instanciar e iniciar el OutboxRelay en el punto de entrada del servicio (@/src/index.ts).
-3. Verificación:
-   - Hacer 'pnpm run dev:build' y observar logs de 'data-registry' para verificar el arranque del Relay.
-   - Insertar manualmente un registro PENDING en la tabla Outbox y verificar llegada a Kafka.
-4. Calidad:
-   - Completar tests unitarios de Handlers y Repositories para alcanzar el 70% de coverage.
+1. Conclusión de Branch:
+   - Git merge feat/data-registry-outbox-relay hacia develop/main.
+2. Diseño Técnico:
+   - Crear Documento de diseño para la integración Scraper (Python) -> Data Registry (API).
+   - Definir contratos de API, autenticación interna y manejo de errores asíncronos.
+3. Decisión de Arquitectura:
+   - Posponer la capa de Redis hasta tener carga real/integración completa con el Scraper para validar su beneficio.
 ```
