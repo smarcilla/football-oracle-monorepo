@@ -32,9 +32,9 @@
 - [x] Implementación de `OutboxRelay` y `OutboxRepository` (Node.js)
 - [x] Refactorización de `MatchService` y `MatchHandler` para Inyección de Dependencias
 - [x] Cobertura de tests unitarios al 51% (objetivo >70%)
-- [ ] Ejecutar migración de DB (`retries` field en Outbox table)
-- [ ] Definir variables de entorno para Kafka y Relay Job
-- [ ] Iniciar `OutboxRelay` en `src/index.ts`
+- [x] Configuración de variables de entorno para Kafka y Relay Job en Docker
+- [x] Inicio de `OutboxRelay` en `src/index.ts` con configuración dinámica
+- [x] Ejecutar migración de DB (`retries` field en Outbox table)
 - [ ] Validar funcionamiento del Job dentro del contenedor Docker
 - [ ] Implementar Outbox Relay Job (Kafka Bridge) - _En progreso_
 - [ ] Implementar Capa de Caché en Repositorios (Redis)
