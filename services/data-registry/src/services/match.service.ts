@@ -11,10 +11,14 @@ export class MatchService {
   private readonly simulationRepository: SimulationRepository;
   private readonly reportRepository: ReportRepository;
 
-  constructor() {
-    this.repository = new MatchRepository();
-    this.simulationRepository = new SimulationRepository();
-    this.reportRepository = new ReportRepository();
+  constructor(
+    repository?: MatchRepository,
+    simulationRepository?: SimulationRepository,
+    reportRepository?: ReportRepository,
+  ) {
+    this.repository = repository || new MatchRepository();
+    this.simulationRepository = simulationRepository || new SimulationRepository();
+    this.reportRepository = reportRepository || new ReportRepository();
   }
 
   async getMatches(filters: MatchFilters) {

@@ -61,7 +61,12 @@ services:
       - DATABASE_URL=postgresql://football:football@postgres:5432/football_oracle
       - REDIS_URL=redis://redis:6379
       - KAFKA_BROKERS=kafka:29092
+      - KAFKA_CLIENT_ID=data-registry
+      - KAFKA_GROUP_ID=data-registry-group
       - INTERNAL_API_KEY=dev-secret-key
+      - OUTBOX_RELAY_INTERVAL_MS=1000
+      - OUTBOX_RELAY_BATCH_SIZE=20
+      - OUTBOX_RELAY_MAX_RETRIES=5
     depends_on:
       postgres:
         condition: service_healthy
