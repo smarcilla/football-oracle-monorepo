@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import { config } from './config/index.js';
 import { initKafka, subscribe, ensureTopics } from '@football-oracle/kafka';
 import { analyzeMatch } from './handlers/analyze.js';
+import { syncLeague } from './handlers/admin.handler.js';
 
 const app: Express = express();
 app.disable('x-powered-by');
@@ -29,6 +30,9 @@ app.get('/health', (_, res) => {
 // Trigger analysis
 app.post('/analyze', analyzeMatch);
 app.post('/analyze/:id', analyzeMatch);
+
+// Admin routes
+app.post('/admin/sync-league', syncLeague);
 
 // Global Error Handler
 app.use(

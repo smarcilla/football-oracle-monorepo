@@ -5,4 +5,8 @@ export const config = {
     clientId: 'api-service',
     groupId: 'api-group',
   },
+  dataRegistry: {
+    url: process.env['DATA_REGISTRY_URL'] || 'http://localhost:3002',
+    apiKey: process.env['INTERNAL_API_KEY'] || '',
+  },
 };

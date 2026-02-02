@@ -9,6 +9,7 @@ import {
   createSimulation,
   createReport,
 } from './handlers/match.handler.js';
+import { getSeasonByLeagueAndYear, requestSync } from './handlers/season.handler.js';
 import { initKafka } from '@football-oracle/kafka';
 import { OutboxRelay } from './jobs/outbox-relay.js';
 import { OutboxRepository } from './repositories/outbox.repository.js';
@@ -32,6 +33,8 @@ app.get('/matches/:id', getMatchById);
 app.post('/matches/bulk', bulkCreateMatches);
 app.patch('/matches/:id/status', updateMatchStatus);
 app.patch('/matches/:id/data', updateMatchData);
+app.get('/seasons', getSeasonByLeagueAndYear);
+app.patch('/seasons/:id/request-sync', requestSync);
 app.post('/simulations', createSimulation);
 app.post('/reports', createReport);
 

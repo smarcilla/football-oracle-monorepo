@@ -9,6 +9,11 @@ export enum BusinessTopic {
   MATCH_REPORT_GENERATED = 'match.report.generated',
 }
 
+export interface LeagueSyncRequested {
+  leagueId: string;
+  year: string;
+}
+
 export interface LeagueSynced {
   league: string;
   year: string;

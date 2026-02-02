@@ -71,12 +71,18 @@ importers:
       '@football-oracle/kafka':
         specifier: workspace:*
         version: link:../../packages/kafka
+      '@football-oracle/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       express:
         specifier: ^5.0.0
         version: 5.0.0
       kafkajs:
         specifier: ^2.2.4
         version: 2.2.4
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
     devDependencies:
       '@types/express':
         specifier: ^5.0.0

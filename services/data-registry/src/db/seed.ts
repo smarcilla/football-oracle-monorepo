@@ -26,6 +26,11 @@ const LEAGUES = [
 ];
 
 const SEASONS = ['23/24', '24/25', '25/26'];
+const currentSeason = process.env['CURRENT_SEASON'];
+
+if (!currentSeason) {
+  console.warn('⚠️  Warning: CURRENT_SEASON not set. All seasons will be inactive.');
+}
 
 console.log('Starting seeding...');
 console.log(
@@ -51,6 +56,7 @@ try {
     console.log(`Upserted league: ${league.name}`);
 
     for (const year of SEASONS) {
+      const isActive = year === currentSeason;
       await prisma.season.upsert({
         where: {
           leagueId_name: {
@@ -58,13 +64,16 @@ try {
             name: year,
           },
         },
-        update: {},
+        update: {
+          isActive,
+        },
         create: {
           name: year,
           leagueId: league.id,
+          isActive,
         },
       });
-      console.log(`  - Added season: ${year}`);
+      console.log(`  - Added season: ${year} (isActive: ${isActive})`);
     }
   }
 } catch (e) {
