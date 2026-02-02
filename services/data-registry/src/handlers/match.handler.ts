@@ -9,7 +9,7 @@ import { CreateSimulationSchema, CreateReportSchema } from '../validators/simula
 import { MatchStatus } from '@prisma/client';
 
 export class MatchHandler {
-  private service: MatchService;
+  private readonly service: MatchService;
 
   constructor(service?: MatchService) {
     this.service = service || new MatchService();

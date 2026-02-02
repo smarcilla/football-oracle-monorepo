@@ -27,7 +27,38 @@ def publish(topic: str, message: dict):
     print(f"[Kafka] Published to {topic}: {message}")
 
 
-def subscribe(topic: str, handler):
+def _process_message(msg, handler):
+    if msg.error():
+        if msg.error().code() == KafkaError._PARTITION_EOF:
+            return True
+        elif msg.error().code() == KafkaError.UNKNOWN_TOPIC_OR_PART:
+            # Topic might not be created yet, ignore and keep polling
+            return True
+        else:
+            print(f"[Kafka] Error: {msg.error()}")
+            return False
+
+    topic = msg.topic()
+    message = json.loads(msg.value().decode("utf-8"))
+    print(f"[Kafka] Received from {topic}: {message}")
+    
+    if isinstance(handler, dict):
+        h = handler.get(topic)
+        if h:
+            h(message)
+        else:
+            print(f"[Kafka] No handler for topic {topic}")
+    elif handler:
+        handler(message)
+    return True
+
+
+def subscribe(topics, handler=None):
+    """
+    Subscribe to one or more topics. 
+    topics can be a string or a list of strings.
+    If handler is a dict, it maps topic names to handler functions.
+    """
     consumer = Consumer({
         "bootstrap.servers": KAFKA_BROKERS,
         "group.id": KAFKA_GROUP_ID,
@@ -37,26 +68,20 @@ def subscribe(topic: str, handler):
         "fetch.wait.max.ms": 500,
     })
 
-    consumer.subscribe([topic])
-    print(f"[Kafka] Subscribed to {topic}")
+    if isinstance(topics, str):
+        topics_list = [topics]
+    else:
+        topics_list = topics
+
+    consumer.subscribe(topics_list)
+    print(f"[Kafka] Subscribed to {topics_list}")
 
     try:
         while True:
             msg = consumer.poll(1.0)
             if msg is None:
                 continue
-            if msg.error():
-                if msg.error().code() == KafkaError._PARTITION_EOF:
-                    continue
-                elif msg.error().code() == KafkaError.UNKNOWN_TOPIC_OR_PART:
-                    # Topic might not be created yet, ignore and keep polling
-                    continue
-                else:
-                    print(f"[Kafka] Error: {msg.error()}")
-                    break
-
-            message = json.loads(msg.value().decode("utf-8"))
-            print(f"[Kafka] Received from {topic}: {message}")
-            handler(message)
+            if not _process_message(msg, handler):
+                break
     finally:
         consumer.close()
