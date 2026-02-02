@@ -4,7 +4,7 @@ import pg from 'pg';
 import 'dotenv/config';
 
 const { Pool } = pg;
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env['DATABASE_URL'];
 
 if (!connectionString) {
   throw new Error('DATABASE_URL environment variable is not set');
@@ -30,9 +30,7 @@ const SEASONS = ['23/24', '24/25', '25/26'];
 console.log('Starting seeding...');
 console.log(
   'DB Connection Check:',
-  process.env.DATABASE_URL
-    ? 'Defined (length: ' + process.env.DATABASE_URL.length + ')'
-    : 'UNDEFINED',
+  connectionString ? 'Defined (length: ' + connectionString.length + ')' : 'UNDEFINED',
 );
 
 try {
@@ -74,6 +72,5 @@ try {
   process.exit(1);
 } finally {
   await prisma.$disconnect();
+  console.log('Seeding finished.');
 }
-
-console.log('Seeding finished.');
