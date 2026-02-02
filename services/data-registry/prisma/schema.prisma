@@ -15,11 +15,15 @@ model League {
 }
 
 model Season {
-  id       Int     @id @default(autoincrement())
-  name     String
-  league   League  @relation(fields: [leagueId], references: [id])
-  leagueId String
-  matches  Match[]
+  id           Int       @id @default(autoincrement())
+  name         String
+  league       League    @relation(fields: [leagueId], references: [id])
+  leagueId     String
+  matches      Match[]
+  
+  // Gestión de sincronización manual
+  isActive     Boolean   @default(true) // true: temporada en curso, false: finalizada
+  lastSyncAt   DateTime?
 
   @@unique([leagueId, name])
 }
