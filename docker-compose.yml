@@ -123,6 +123,7 @@ services:
     environment:
       - KAFKA_BROKERS=kafka:29092
       - DATA_REGISTRY_URL=http://data-registry:3002
+      - PYTHONUNBUFFERED=1
     depends_on:
       data-registry:
         condition: service_healthy
